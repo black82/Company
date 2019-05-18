@@ -35,7 +35,7 @@ public class Colector {
     public String colectionDataCompany(Long id) {
 
         Company one = companyRepository.getOne(id);
-        String url = "https://web2.cylex.de/s?q=" + changeSpais(one.getName()) + "&c=&z=&p=1&dst=" + changeSpais(one.getRegisteredoffice()) + "&sUrl=&cUrl=";
+        String url = 
         if (one.getRegisteredoffice().equals("Berlin")) {
             if (one.getCurrent_status().equals("currently registered")) {
                 secondUrlToCompany(url, one);
