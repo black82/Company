@@ -5,9 +5,9 @@ companyRepository.saveAndFlush(company);
         String grown_out;
         String sic;
         String kapital;
-
+1170896
         try {
-
+Der Geschaeftsgegenstand des Unternehmens ist der Erwerb, das Halten, die Verwaltung und die Veraeusserung von Wagniskapitalbeteiligungengemaess PAR. 1 a A
             telephon = html.substring(html.indexOf("og:phone_number",1) + 26, html.indexOf("og:phone_number",1) + 40);
             fax = html.substring(html.indexOf("og:fax_number",1) + 24, html.indexOf("og:fax_number",1) + 36);
             url1 = html.substring(html.lastIndexOf("contact-data-url") + 27, html.lastIndexOf("contact-data-url") + 127);

@@ -13,13 +13,12 @@ import java.util.Set;
 
 @Data
 @Entity
-@Table( name = "company" )
+@Table ( name = "company" )
 @NoArgsConstructor
 @AllArgsConstructor
 public class Company implements Serializable {
     @Id
-    @GeneratedValue( strategy = GenerationType.AUTO )
-
+    @GeneratedValue ( strategy = GenerationType.SEQUENCE )
     private Long id;
     private String company_number;
     private String current_status;
@@ -44,10 +43,12 @@ public class Company implements Serializable {
     private String fax;
     private String url;
     private String sector_of_activity;
-    @OneToMany( cascade = CascadeType.ALL )
-    @LazyCollection( LazyCollectionOption.FALSE )
-    @JoinTable( name = "COMPANY_OFFICER", joinColumns = {@JoinColumn( name = "COMPANY_ID" )}, inverseJoinColumns = {@JoinColumn( name = "OFFICER_ID" )} )
-    private List <Rabotnik> officers;
+    @OneToMany ( cascade = CascadeType.ALL )
+    @LazyCollection ( LazyCollectionOption.FALSE )
+    @JoinTable ( name = "COMPANY_OFFICER",
+            joinColumns = {@JoinColumn ( name = "COMPANY_ID" )},
+            inverseJoinColumns = {@JoinColumn ( name = "OFFICER_ID" )} )
+    private List<Worker> officers;
     private String sic;
     private String kapital;
     private String email;
@@ -56,6 +57,9 @@ public class Company implements Serializable {
     private String googleUri;
     private String googleEmail;
     @ElementCollection
-    private Set <String> emails;
+    private Set<String> emails;
+    private String keywordsIndustry;
+    private String catalog;
+    private String activity;
 
 }

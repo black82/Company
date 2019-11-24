@@ -15,7 +15,6 @@ import java.io.Serializable;
 public class Officer implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-
     private Long id;
     private String name;
     private String position;

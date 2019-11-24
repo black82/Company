@@ -10,9 +10,22 @@ import java.util.List;
 public interface CompanyRepository extends JpaRepository<Company, Long> {
     List<Company> findByRegistrar(String city);
 
-    List<Company> findFirst1000ByRegistrar(String city);
+    List<Company> findDistinctFirstByRegistrar(String city);
 
-    List<Company> findFirst1000ByRegisteredoffice(String registered_office );
+    List<Company> findByRegisteredoffice(String registered_office);
 
     Company findByName(String name);
+
+
+    List<Company> findCompaniesByKeywordsIndustryContaining(String keywords);
+
+    List<Company> findCompaniesByActivityContaining(String activity);
+
+    List<Company> findCompaniesByCatalogContaining(String Catalog);
+
+    List<Company> findCompaniesBySicContaining(String sector_activity);
+
+    List<Company> findCompanyByNameContaining(String name);
+
+
 }

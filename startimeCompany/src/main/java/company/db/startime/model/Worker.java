@@ -4,20 +4,18 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "OFFICER_BY_COMPANY")
+@Table ( name = "NEWCOMPANY_OFICER" )
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Rabotnik implements Serializable {
+public class Worker implements Serializable {
     @Id
-    @Column(name = "OFFICER_ID")
+    @Column ( name = "OFFICER_ID" )
+    @GeneratedValue ( strategy = GenerationType.IDENTITY )
     private Long id;
     private String name;
     private String position;

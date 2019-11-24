@@ -4,8 +4,6 @@ import company.db.startime.model.CompanyGoogle;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
 public interface CompanyGoogleRepository extends JpaRepository<CompanyGoogle, Long> {
 //    List<CompanyGoogle> findByRegistrar(String city);

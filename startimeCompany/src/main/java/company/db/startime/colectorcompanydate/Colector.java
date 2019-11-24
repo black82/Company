@@ -1,10 +1,13 @@
 package company.db.startime.colectorcompanydate;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-import company.db.startime.model.Company;
+import company.db.startime.clientorchideaconection.Status;
+import company.db.startime.model.*;
+import company.db.startime.repository.CompanyActivityRepository;
 import company.db.startime.repository.CompanyRepository;
+import company.db.startime.repository.NewCompanyPojoRepository;
+import company.db.startime.repository.OfficerRepository;
+import company.db.startime.service.CompanyActivityList;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -13,86 +16,249 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.*;
+import java.util.stream.Collectors;
+
 
 @Component
 public class Colector {
-
+    private final Path pathWEB = Paths.get ("/home/black82/Desktop/Company/startimeCompany/src/main/resources/web2.txt");
+    private final Path PATH_ACTIVITY = Paths.get ("/home/black82/Desktop/Company/startimeCompany/src/main/resources/activyty.txt");
     @Autowired
     CompanyRepository companyRepository;
     @Autowired
     SubstringToHtmlDataToCompany substringToHtmlDataToCompany;
+    @Autowired
+    NewCompanyPojoRepository companyPojoRepository;
+    @Autowired
+    CompanyActivityList companyActivyty;
+    @Autowired
+    OfficerRepository officerRepository;
+    @Autowired
+    CompanyActivityRepository companyActivityRepository;
 
-    public String startColector(Long id) {
-        Client client = Client.create();
-
+    public Boolean startColector(Long id) {
         for (; id < 10000000; id++) {
-            WebResource webResource = client.resource("http://localhost:8081/colect/" + id);
-            ClientResponse response = webResource.get(ClientResponse.class);
+            Optional<Company> one1 = companyRepository.findById (id);
+            Company one;
+            if (one1.isPresent ()) {
+                one = one1.get ();
+                String s = Optional.ofNullable (one.getRegisteredoffice ()).orElse ("");
+                if (!s.isEmpty ()) {
+                    if (one.getRegisteredoffice ().equals ("Berlin")) {
+                        if (one.getCurrent_status ().equals ("currently registered")) {
+                            try {
+                                colectionDataCompany (one);
 
-        }
-        return "gotova";
-    }
-    public String colectionDataCompany(Long id) {
-
-        Company one = companyRepository.getOne(id);
-        String url = 
-        if (one.getRegisteredoffice().equals("Berlin")) {
-            if (one.getCurrent_status().equals("currently registered")) {
-                secondUrlToCompany(url, one);
+                            } catch (Exception e) {
+                                e.printStackTrace ();
+                            }
+                        }
+                    }
+                }
             }
         }
-        return "finis";
+        return true;
     }
 
-    private String changeSpais(String string) {
-        if(string.contains(String.valueOf('"'))) {
-            String s = string.replaceAll(String.valueOf('"'), "");
-            return s.replaceAll(" ", "%20").trim();
+    public void colectionDataCompany(Company one) {
+        String land = null;
+        if (one.getRegisteredoffice () != null) {
+            land = one.getRegisteredoffice ().toLowerCase ();
         }
-        return string.replaceAll(" ", "%20").trim();
+        String land1 = one.getRegisteredoffice ();
+        if (land == null) land = one.getRegistrar ();
+        String url = "https://web2.cylex.de/s?q=" + changeSpaisToUrl (one.getName ()) + "&c=" + land + "&z=&p=1&dst=&sUrl=&cUrl=" + land1;
+        secondUrlToCompany (url, one);
     }
 
-    private void secondUrlToCompany(String url, Company companies) {
+    private String changeSpaisToUrl(String string) {
+        if (string.contains (String.valueOf ('"'))) {
+            String s = string.replaceAll (String.valueOf ('"'), "");
+            return s.replaceAll (" ", "%20").trim ();
+        }
+        return string.replaceAll (" ", "%20").trim ();
+    }
+
+    private void secondUrlToCompany(String url,
+            Company companies) {
         String htmlFirstPage;
-//        try {
-//            Thread.sleep(40000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//        Client client = Client.create();
-//        System.setProperty("java.net.useSystemProxies", "true");
-//        System.setProperty("https.protocols", "TLSv1,TLSv1.1,TLSv1.2");
-//        WebResource webResource = client.resource(url);
-//        ClientResponse response = webResource.get(ClientResponse.class);
-        Path path = Paths.get("C:\\Users\\Tel-Ran\\Documents\\Git\\startimeCompany\\src\\main\\resources\\web2.txt");
-if (companies.getRegisteredoffice().equals("Berlin")) {
-    try (BufferedWriter writer = Files.newBufferedWriter(path)) {
-        writer.write(companies.getId() + " ");
-    } catch (IOException ex) {
-        ex.printStackTrace();
-    }
-}
-//        if (response.getStatus() == 200) {
-//            htmlFirstPage = webResource.get(String.class);
-//        } else throw new RuntimeException("" + response.getStatus());
-        htmlFirstPage=substringToHtmlDataToCompany.conectionSeleniumTor(url);
-
-        String urlToCompanyPage = cutUrlToHtml(htmlFirstPage);
-
-        coletAndSaveDate(companies, urlToCompanyPage);
+        if (companies.getRegisteredoffice ().equals ("Berlin")) {
+            writeToFileCompanyId (companies.getId (), pathWEB);
+        }
+        Status status = substringToHtmlDataToCompany.connectionSeleniumTor (url);
+        htmlFirstPage = substringToHtmlDataToCompany.ceskStausconectium (status, url);
+        String urlToCompanyPage = cutUrlToHtml (htmlFirstPage);
+        if (!urlToCompanyPage.equals (" ")) {
+            coletAndSaveDate (companies, urlToCompanyPage);
+        }
     }
 
     private String cutUrlToHtml(String html) {
-        String h4 = html.substring(html.indexOf("block bold h4"), html.indexOf("LM-LIST-CLICKS"));
-        return h4.substring(h4.indexOf("=") + 2, h4.indexOf("onclick") - 2);
+        if (html.contains ("LM-LIST-CLICKS")) {
+            String urlToCompanyInfo = html.substring (html.indexOf ("block bold h4"), html.indexOf ("LM-LIST-CLICKS"));
+            return urlToCompanyInfo.substring (urlToCompanyInfo.indexOf ("=") + 2, urlToCompanyInfo.indexOf ("onclick") - 2);
+        }
+        else { return " "; }
     }
 
-    private String coletAndSaveDate(Company company, String html) {
-        Company company1 = substringToHtmlDataToCompany.substringHtml(company, html);
-        company1.setEmail(substringToHtmlDataToCompany.colectMailToWebSite(company1.getUrl()));
-        company1.setWeb2Url(html);
-        companyRepository.save(company1);
+    private void coletAndSaveDate(Company company,
+            String html) {
+        company = substringToHtmlDataToCompany.substringHtml (company, html);
+        company.setEmail (substringToHtmlDataToCompany.colectMailToWebSite (company.getUrl ()));
+        company.setWeb2Url (html);
+        companyRepository.save (company);
+    }
 
-        return company1.getUrl();
+    public void interactToCatalogCutToDataBase(Long id) {
+        for (; id < 6000000; id++) {
+            Optional<Company> byId = companyRepository.findById (id);
+            if (byId.isPresent ()) {
+                Company company = byId.get ();
+                String html = company.getHtml ();
+                if (html != null && !html.equals (" ")) cutCatalogByIndustri (company, html);
+            }
+        }
+    }
+
+    public void cutCatalogByIndustri(Company company,
+            String html) {
+
+        if (html.contains ("text-sub visible-xxs")) {
+            company.setCatalog (html.substring (html.indexOf ("text-sub visible-xxs") + 22, html.indexOf ("</small><div class=\"row\"")));
+        }
+        if (html.contains ("Tätigkeit")) {
+            String activity = html.substring (html.indexOf ("Tätigkeit") + 45, html.indexOf ("Tätigkeit") + 300);
+            String[] split1 = activity.split ("<");
+            company.setActivity (split1[0]);
+        }
+        if (html.contains ("truncated-200")) {
+            String keyWords1 = html.substring (html.indexOf ("truncated-200") + 15, html.indexOf ("truncated-200") + 150);
+            String[] split = keyWords1.split ("<");
+            company.setKeywordsIndustry (split[0]);
+        }
+        companyRepository.saveAndFlush (company);
+        writeToFileCompanyId (company.getId (), PATH_ACTIVITY);
+    }
+
+    public synchronized void writeToFileCompanyId(Long id,
+            Path patch) {
+        try (BufferedWriter writer = Files.newBufferedWriter (patch)) {
+            writer.write (id + " ");
+        } catch (IOException ex) {
+            ex.printStackTrace ();
+        }
+    }
+
+    public void constructnewCompany(Long id) {
+        for (; id < 6000000; id++) {
+            Optional<Company> optionalCompany = companyRepository.findById (id);
+            if (optionalCompany.isPresent ()) {
+                Company old = optionalCompany.get ();
+                if (!old.getCurrent_status ().equals ("removed")) construct (old);
+            }
+
+        }
+    }
+
+    public Set<String> savetEmails(Company company) {
+        Set<String> set = company.getEmails ();
+        return new HashSet<> (set);
+
+    }
+
+    public void construct(Company company) {
+        //List<Worker> workers = constructWorker (company);
+        Set<String> set = company.getEmails ();
+        NewCompanyPojo companyPojo = new NewCompanyPojo ();
+        List<CompanyActivyty> companyActivyties = create (company, companyPojo);
+
+        ContactCompany contactCompany = new ContactCompany ();
+        AddressCompany addressCompany = new AddressCompany ();
+        addressCompany.setRegister_art (company.getRegister_art ());
+        addressCompany.setRegister_flag_Status_information (company.getRegister_flag_Status_information ());
+        addressCompany.setRegistered_address (company.getRegistered_address ());
+        addressCompany.setRegisteredoffice (company.getRegisteredoffice ());
+        addressCompany.setRegistrar (company.getRegistrar ());
+        contactCompany.setEmail (company.getEmail ());
+        contactCompany.setFax (company.getFax ());
+        contactCompany.setGoogleUri (company.getGoogleUri ());
+        contactCompany.setTelephone (company.getTelephone ());
+        contactCompany.setWeb2Url (company.getWeb2Url ());
+        contactCompany.setUrl (company.getUrl ());
+
+        companyPojo.setCatalog (company.getCatalog ());
+        companyPojo.setCompany_number (company.getCompany_number ());
+        companyPojo.setCurrent_status (company.getCurrent_status ());
+        companyPojo.setJurisdiction_code (company.getJurisdiction_code ());
+        companyPojo.setActivity (company.getActivity ());
+        companyPojo.setKeywordsIndustry (company.getKeywordsIndustry ());
+        companyPojo.setRegister_flag_AD (company.getRegister_flag_AD ());
+        companyPojo.setNative_company_number (company.getNative_company_number ());
+        companyPojo.setCatalog (company.getCatalog ());
+        companyPojo.setName (company.getName ());
+        companyPojoRepository.save (companyPojo);
+        // if (!workers.isEmpty ()) companyPojo.setOfficers (workers);
+        companyPojo.setRetrieved_at (company.getRetrieved_at ());
+        companyPojo.setContactCompany (contactCompany);
+        companyPojo.setAddressCompany (addressCompany);
+        companyPojo.setCompanyActivyties (companyActivyties);
+        companyPojo.getContactCompany ().getEmails ().addAll (set);
+        companyPojoRepository.save (companyPojo);
+
+    }
+
+    public List<Worker> constructWorker(Company company) {
+        ModelMapper modelMapper = new ModelMapper ();
+        List<Officer> byCompany_id = officerRepository.findByNumer (company.getCompany_number ());
+        if (byCompany_id != null) {
+            List<Worker> officerByCompanies = byCompany_id
+                    .stream ()
+                    .map (a -> modelMapper.map (a, Worker.class))
+                    .collect (Collectors.toList ());
+            return officerByCompanies;
+        }
+        return null;
+    }
+
+    public List<CompanyActivyty> create(Company company,
+            NewCompanyPojo companyPojo) {
+        List<CompanyActivyty> activyties = new ArrayList<> ();
+        activyties.addAll (split (company.getKeywordsIndustry (), companyPojo));
+        activyties.addAll (split (company.getActivity (), companyPojo));
+        activyties.addAll (split (company.getCatalog (), companyPojo));
+        activyties.addAll (split (company.getSic (), companyPojo));
+        activyties.addAll (split (company.getSector_of_activity (), companyPojo));
+        return activyties.stream ().distinct ().collect (Collectors.toList ());
+    }
+
+    public Set<CompanyActivyty> split(String activiti,
+            NewCompanyPojo companyPojo) {
+        List<String> activity = companyActivyty.getActivity ();
+        Set<CompanyActivyty> activyties = new HashSet<> ();
+        for (String str : activity) {
+            str = str.trim ();
+            if (activiti != null && activiti.contains (str) && str.length () > 2 && !str.equals ("und")) {
+                Optional<CompanyActivyty> byTypeActivity = companyActivityRepository.findByTypeActivity (str);
+                CompanyActivyty companyActivyty;
+                if (byTypeActivity.isPresent ()) {
+                    companyActivyty = byTypeActivity.get ();
+                }
+                else {
+                    companyActivyty = new CompanyActivyty ();
+
+                    companyActivyty.setTypeActivity (str);
+                    companyActivyty.getNewCompanyPoj ().add (companyPojo);
+                }
+
+                activyties.add (companyActivyty);
+            }
+        }
+        return activyties;
+
     }
 }
+
+
+
+
