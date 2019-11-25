@@ -16,20 +16,20 @@ import java.util.Set;
 public class Users implements Serializable {
 
     @Id
-
-    @GeneratedValue ( strategy = GenerationType.IDENTITY )
+    @Column ( name = "id" )
+    @GeneratedValue ( strategy = GenerationType.AUTO )
     private Long id;
     @Column ( unique = true,
-            name = "email_USER" )
+            name = "EMAIL_USER" )
     private String email;
-    @Column ( name = "pasword_USER" )
+    @Column ( name = "PASSWORD_USER" )
     private String password;
-    @Column ( name = "fulname_USERS" )
+    @Column ( name = "FULLNAME_USERS" )
     private String fullname;
-    @Column ( name = "enabled_USER" )
+    @Column ( name = "ENABLED_USER" )
     private boolean enabled;
     @OneToMany ( cascade = CascadeType.ALL,
             orphanRemoval = true,
-            fetch = FetchType.LAZY )
+            fetch = FetchType.EAGER )
     private Set<Role> roles_users;
 }

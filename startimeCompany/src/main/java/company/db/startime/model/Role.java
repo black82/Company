@@ -11,13 +11,13 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Data
 @NoArgsConstructor
-@Table ( name = "user_role" )
+@Table ( name = "ROLE" )
 public class Role implements Serializable {
     @Id
 
-    @GeneratedValue ( strategy = GenerationType.IDENTITY )
+    @GeneratedValue ( strategy = GenerationType.AUTO )
     private Long id;
-    @Column ( name = "ROLESUSER" )
+    @Column ( name = "ROLES_USER" )
     private String roleUser;
 
 }

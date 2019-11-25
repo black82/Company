@@ -140,16 +140,36 @@ create table NEWCOMPANY_OFICER
 )
     engine = MyISAM;
 
+create table ROLE
+(
+    id         bigint       not null
+        primary key,
+    ROLES_USER varchar(255) null
+);
+
 create table USERS
 (
-    id            bigint auto_increment
+    id             bigint       not null
         primary key,
-    email_USER    varchar(255) null,
-    enabled_USER  bit          null,
-    fulname_USERS varchar(255) null,
-    pasword_USER  varchar(255) null,
-    constraint UK_a73u9vt6rg6se9t7vdxgeyyyy
-        unique (email_USER)
+    EMAIL_USER     varchar(255) null,
+    ENABLED_USER   bit          null,
+    FULLNAME_USERS varchar(255) null,
+    PASSWORD_USER  varchar(255) null,
+    constraint UK_dal8sqh0ylchleammsishb3jq
+        unique (EMAIL_USER)
+);
+
+create table USERS_roles_users
+(
+    Users_id       bigint not null,
+    roles_users_id bigint not null,
+    primary key (Users_id, roles_users_id),
+    constraint UK_cjdt3d7j33xp2tvxj1xef74ls
+        unique (roles_users_id),
+    constraint FK6j2yfnf2dsxhnwya7a8agei13
+        foreign key (Users_id) references USERS (id),
+    constraint FKmscpa7am0i5udp283sgf5cd52
+        foreign key (roles_users_id) references ROLE (id)
 );
 
 create table company
@@ -312,22 +332,3 @@ create table officer_by_company
     engine = MyISAM
     charset = utf8mb4;
 
-create table user_role
-(
-    id        bigint auto_increment
-        primary key,
-    ROLESUSER varchar(255) null
-);
-
-create table USERS_roles_users
-(
-    Users_id       bigint not null,
-    roles_users_id bigint not null,
-    primary key (Users_id, roles_users_id),
-    constraint UK_cjdt3d7j33xp2tvxj1xef74ls
-        unique (roles_users_id),
-    constraint FK6j2yfnf2dsxhnwya7a8agei13
-        foreign key (Users_id) references USERS (id),
-    constraint FKwxe2x04hmb39oesdwne187id
-        foreign key (roles_users_id) references user_role (id)
-);
