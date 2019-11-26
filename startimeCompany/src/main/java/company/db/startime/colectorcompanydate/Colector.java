@@ -9,6 +9,8 @@ import company.db.startime.repository.OfficerRepository;
 import company.db.startime.service.CompanyActivityList;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedWriter;
@@ -22,6 +24,14 @@ import java.util.stream.Collectors;
 
 @Component
 public class Colector {
+    @Autowired
+    private Environment env;
+
+    private String start = env.getProperty ("start");
+    @Value ( "${midel}" )
+    private String midel;
+    @Value ( "${finish}" )
+    private String finish;
     private final Path pathWEB = Paths.get ("/home/black82/Desktop/Company/startimeCompany/src/main/resources/web2.txt");
     private final Path PATH_ACTIVITY = Paths.get ("/home/black82/Desktop/Company/startimeCompany/src/main/resources/activyty.txt");
     @Autowired
@@ -68,7 +78,7 @@ public class Colector {
         }
         String land1 = one.getRegisteredoffice ();
         if (land == null) land = one.getRegistrar ();
-        String url = "https://web2.cylex.de/s?q=" + changeSpaisToUrl (one.getName ()) + "&c=" + land + "&z=&p=1&dst=&sUrl=&cUrl=" + land1;
+        String url = start + changeSpaisToUrl (one.getName ()) + midel + land + finish + land1;
         secondUrlToCompany (url, one);
     }
 
