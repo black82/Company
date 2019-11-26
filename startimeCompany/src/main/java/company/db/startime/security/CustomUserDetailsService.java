@@ -1,5 +1,6 @@
 package company.db.startime.security;
 
+import company.db.startime.model.AuthBody;
 import company.db.startime.model.Role;
 import company.db.startime.model.Users;
 import company.db.startime.repository.RoleRepository;
@@ -8,6 +9,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,6 +30,11 @@ import java.util.*;
 public class CustomUserDetailsService implements UserDetailsService {
 
     @Autowired
+    AuthenticationManager authenticationManager;
+
+    @Autowired
+    JwtTokenProvider jwtTokenProvider;
+    @Autowired
     private UserRepository userRepository;
 
     @Autowired
@@ -35,6 +45,33 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     public Users findUserByEmail(String email) {
         return userRepository.findByEmail (email);
+    }
+
+    public Map<Object, Object> login(AuthBody data) {
+        try {
+            String username = data.getEmail ();
+            authenticationManager.authenticate (new UsernamePasswordAuthenticationToken (username, data.getPassword ()));
+            String token = jwtTokenProvider.createToken (username, this.userRepository
+                    .findByEmail (username)
+                    .getRoles_users ());
+            Map<Object, Object> model = new HashMap<> ();
+            model.put ("username", username);
+            model.put ("token", token);
+            return model;
+        } catch (AuthenticationException e) {
+            throw new BadCredentialsException ("Invalid email/password supplied");
+        }
+    }
+
+    public Map<Object, Object> register(Users users) {
+        Users usersExists = findUserByEmail (users.getEmail ());
+        if (usersExists != null) {
+            throw new BadCredentialsException ("Users with username: " + users.getEmail () + " already exists");
+        }
+        saveUser (users);
+        Map<Object, Object> model = new HashMap<> ();
+        model.put ("message", "Users registered successfully");
+        return model;
     }
 
     public void saveUser(Users users) {
