@@ -10,7 +10,6 @@ import company.db.startime.clientorchideaconection.ClientOrhidea;
 import company.db.startime.clientorchideaconection.Status;
 import company.db.startime.model.Company;
 import company.db.startime.repository.CompanyRepository;
-import lombok.Data;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -35,7 +34,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-@Data
 @Component
 @SuppressWarnings ( value = "SubstringToHtmlDataToCompany" )
 public class SubstringToHtmlDataToCompany {

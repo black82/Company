@@ -31,7 +31,7 @@ add on 3.3.19
 
 /.classpath
 /.factorypath
-/src/main/resources/application-local.properties
+/src/main/resources/templates/application-local.properties
 /src/main/resources/application.properties
 
 /.project

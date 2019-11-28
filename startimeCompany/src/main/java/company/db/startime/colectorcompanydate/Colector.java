@@ -10,7 +10,8 @@ import company.db.startime.service.CompanyActivityList;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedWriter;
@@ -21,27 +22,31 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
+@Configuration
 @Component
+@PropertySource ( "classpath:templates/application-local.properties" )
+
 public class Colector {
     @Autowired
-    private Environment env;
-
-    private String start = env.getProperty ("start");
+    CompanyActivityList companyActivity;
     @Value ( "${midel}" )
     private String midel;
     @Value ( "${finish}" )
     private String finish;
-    private final Path pathWEB = Paths.get ("/home/black82/Desktop/Company/startimeCompany/src/main/resources/web2.txt");
-    private final Path PATH_ACTIVITY = Paths.get ("/home/black82/Desktop/Company/startimeCompany/src/main/resources/activyty.txt");
+    @Value ( "${start}" )
+    private String start;
+    @Value ( "${patchweb}" )
+    private String patchweb;
+    @Value ( "${patch.file.activity}" )
+    private String patch2;
+    private Path pathWEB = Paths.get ("/home/black82/Desktop/Company/startimeCompany/src/main/resources/web2.txt");
     @Autowired
     CompanyRepository companyRepository;
     @Autowired
     SubstringToHtmlDataToCompany substringToHtmlDataToCompany;
     @Autowired
     NewCompanyPojoRepository companyPojoRepository;
-    @Autowired
-    CompanyActivityList companyActivyty;
+    private Path PATH_ACTIVITY = Paths.get ("/home/black82/Desktop/Company/startimeCompany/src/main/resources/activyty.txt");
     @Autowired
     OfficerRepository officerRepository;
     @Autowired
@@ -244,7 +249,7 @@ public class Colector {
 
     public Set<CompanyActivyty> split(String activiti,
             NewCompanyPojo companyPojo) {
-        List<String> activity = companyActivyty.getActivity ();
+        List<String> activity = companyActivity.getActivity ();
         Set<CompanyActivyty> activyties = new HashSet<> ();
         for (String str : activity) {
             str = str.trim ();
@@ -267,6 +272,7 @@ public class Colector {
         return activyties;
 
     }
+
 }
 
 
