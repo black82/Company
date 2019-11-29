@@ -5,9 +5,6 @@ import company.db.startime.model.Role;
 import company.db.startime.model.Users;
 import company.db.startime.repository.RoleRepository;
 import company.db.startime.repository.UserRepository;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -24,9 +21,6 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
     @Autowired

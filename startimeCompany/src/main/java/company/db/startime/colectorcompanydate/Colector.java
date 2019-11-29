@@ -29,24 +29,12 @@ import java.util.stream.Collectors;
 public class Colector {
     @Autowired
     CompanyActivityList companyActivity;
-    @Value ( "${midel}" )
-    private String midel;
-    @Value ( "${finish}" )
-    private String finish;
-    @Value ( "${start}" )
-    private String start;
-    @Value ( "${patchweb}" )
-    private String patchweb;
-    @Value ( "${patch.file.activity}" )
-    private String patch2;
-    private Path pathWEB = Paths.get ("/home/black82/Desktop/Company/startimeCompany/src/main/resources/web2.txt");
     @Autowired
     CompanyRepository companyRepository;
     @Autowired
     SubstringToHtmlDataToCompany substringToHtmlDataToCompany;
     @Autowired
     NewCompanyPojoRepository companyPojoRepository;
-    private Path PATH_ACTIVITY = Paths.get ("/home/black82/Desktop/Company/startimeCompany/src/main/resources/activyty.txt");
     @Autowired
     OfficerRepository officerRepository;
     @Autowired
@@ -95,19 +83,7 @@ public class Colector {
         return string.replaceAll (" ", "%20").trim ();
     }
 
-    private void secondUrlToCompany(String url,
-            Company companies) {
-        String htmlFirstPage;
-        if (companies.getRegisteredoffice ().equals ("Berlin")) {
-            writeToFileCompanyId (companies.getId (), pathWEB);
-        }
-        Status status = substringToHtmlDataToCompany.connectionSeleniumTor (url);
-        htmlFirstPage = substringToHtmlDataToCompany.ceskStausconectium (status, url);
-        String urlToCompanyPage = cutUrlToHtml (htmlFirstPage);
-        if (!urlToCompanyPage.equals (" ")) {
-            coletAndSaveDate (companies, urlToCompanyPage);
-        }
-    }
+    private Path PATH_ACTIVITY = Paths.get ("classpath:src/main/resources/activyty.txt");
 
     private String cutUrlToHtml(String html) {
         if (html.contains ("LM-LIST-CLICKS")) {
@@ -273,6 +249,27 @@ public class Colector {
 
     }
 
+    @Value ( "${url.colector.midel}" )
+    private String midel;
+    @Value ( "${url.collector.finish}" )
+    private String finish;
+    @Value ( "${start}" )
+    private String start;
+    private Path path = Paths.get ("classpath:src/main/resources/webcolect.txt");
+
+    private void secondUrlToCompany(String url,
+            Company companies) {
+        String htmlFirstPage;
+        if (companies.getRegisteredoffice ().equals ("Berlin")) {
+            writeToFileCompanyId (companies.getId (), path);
+        }
+        Status status = substringToHtmlDataToCompany.connectionSeleniumTor (url);
+        htmlFirstPage = substringToHtmlDataToCompany.ceskStausconectium (status, url);
+        String urlToCompanyPage = cutUrlToHtml (htmlFirstPage);
+        if (!urlToCompanyPage.equals (" ")) {
+            coletAndSaveDate (companies, urlToCompanyPage);
+        }
+    }
 }
 
 

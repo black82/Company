@@ -4,6 +4,7 @@ import company.db.startime.model.Role;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,12 +17,13 @@ import java.util.Date;
 import java.util.Set;
 
 @Component
+@PropertySource ( "classpath:templates/application-local.properties" )
 public class JwtTokenProvider {
 
-    @Value ( "${client.secret}" )
+    @Value ( "${jwt.client.secret.hidden}" )
     private String secretKey;
 
-    @Value ( "${security.jwt.token.expire-length}" )
+    @Value ( "${jwt.expire.length.token}" )
     private long validityInMilliseconds;
 
     @Autowired
