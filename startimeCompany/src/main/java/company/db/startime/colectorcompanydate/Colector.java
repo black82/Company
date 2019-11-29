@@ -10,7 +10,6 @@ import company.db.startime.service.CompanyActivityList;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
@@ -22,23 +21,23 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Configuration
+
 @Component
 @PropertySource ( "classpath:templates/application-local.properties" )
-
 public class Colector {
     @Autowired
-    CompanyActivityList companyActivity;
+    private CompanyActivityList companyActivity;
     @Autowired
-    CompanyRepository companyRepository;
+    private CompanyRepository companyRepository;
     @Autowired
-    SubstringToHtmlDataToCompany substringToHtmlDataToCompany;
+    private SubstringToHtmlDataToCompany substringToHtmlDataToCompany;
     @Autowired
-    NewCompanyPojoRepository companyPojoRepository;
+    private NewCompanyPojoRepository companyPojoRepository;
     @Autowired
-    OfficerRepository officerRepository;
+    private OfficerRepository officerRepository;
     @Autowired
-    CompanyActivityRepository companyActivityRepository;
+    private CompanyActivityRepository companyActivityRepository;
+
 
     public Boolean startColector(Long id) {
         for (; id < 10000000; id++) {
@@ -64,16 +63,8 @@ public class Colector {
         return true;
     }
 
-    public void colectionDataCompany(Company one) {
-        String land = null;
-        if (one.getRegisteredoffice () != null) {
-            land = one.getRegisteredoffice ().toLowerCase ();
-        }
-        String land1 = one.getRegisteredoffice ();
-        if (land == null) land = one.getRegistrar ();
-        String url = start + changeSpaisToUrl (one.getName ()) + midel + land + finish + land1;
-        secondUrlToCompany (url, one);
-    }
+    @Value ( "${url.collector.midel}" )
+    private String midel;
 
     private String changeSpaisToUrl(String string) {
         if (string.contains (String.valueOf ('"'))) {
@@ -112,34 +103,10 @@ public class Colector {
         }
     }
 
-    public void cutCatalogByIndustri(Company company,
-            String html) {
-
-        if (html.contains ("text-sub visible-xxs")) {
-            company.setCatalog (html.substring (html.indexOf ("text-sub visible-xxs") + 22, html.indexOf ("</small><div class=\"row\"")));
-        }
-        if (html.contains ("Tätigkeit")) {
-            String activity = html.substring (html.indexOf ("Tätigkeit") + 45, html.indexOf ("Tätigkeit") + 300);
-            String[] split1 = activity.split ("<");
-            company.setActivity (split1[0]);
-        }
-        if (html.contains ("truncated-200")) {
-            String keyWords1 = html.substring (html.indexOf ("truncated-200") + 15, html.indexOf ("truncated-200") + 150);
-            String[] split = keyWords1.split ("<");
-            company.setKeywordsIndustry (split[0]);
-        }
-        companyRepository.saveAndFlush (company);
-        writeToFileCompanyId (company.getId (), PATH_ACTIVITY);
-    }
-
-    public synchronized void writeToFileCompanyId(Long id,
-            Path patch) {
-        try (BufferedWriter writer = Files.newBufferedWriter (patch)) {
-            writer.write (id + " ");
-        } catch (IOException ex) {
-            ex.printStackTrace ();
-        }
-    }
+    @Value ( "${url.collector.finish}" )
+    private String finish;
+    @Value ( "${start}" )
+    private String start;
 
     public void constructnewCompany(Long id) {
         for (; id < 6000000; id++) {
@@ -249,13 +216,6 @@ public class Colector {
 
     }
 
-    @Value ( "${url.colector.midel}" )
-    private String midel;
-    @Value ( "${url.collector.finish}" )
-    private String finish;
-    @Value ( "${start}" )
-    private String start;
-    private Path path = Paths.get ("classpath:src/main/resources/webcolect.txt");
 
     private void secondUrlToCompany(String url,
             Company companies) {
@@ -268,6 +228,48 @@ public class Colector {
         String urlToCompanyPage = cutUrlToHtml (htmlFirstPage);
         if (!urlToCompanyPage.equals (" ")) {
             coletAndSaveDate (companies, urlToCompanyPage);
+        }
+    }
+
+    private Path path = Paths.get ("classpath:src/main/resources/webcolect.txt");
+
+    private void colectionDataCompany(Company one) {
+        String land = null;
+        if (one.getRegisteredoffice () != null) {
+            land = one.getRegisteredoffice ().toLowerCase ();
+        }
+        String land1 = one.getRegisteredoffice ();
+        if (land == null) land = one.getRegistrar ();
+        String url = start + changeSpaisToUrl (one.getName ()) + midel + land + finish + land1;
+        secondUrlToCompany (url, one);
+    }
+
+    void cutCatalogByIndustri(Company company,
+            String html) {
+
+        if (html.contains ("text-sub visible-xxs")) {
+            company.setCatalog (html.substring (html.indexOf ("text-sub visible-xxs") + 22, html.indexOf ("</small><div class=\"row\"")));
+        }
+        if (html.contains ("Tätigkeit")) {
+            String activity = html.substring (html.indexOf ("Tätigkeit") + 45, html.indexOf ("Tätigkeit") + 300);
+            String[] split1 = activity.split ("<");
+            company.setActivity (split1[0]);
+        }
+        if (html.contains ("truncated-200")) {
+            String keyWords1 = html.substring (html.indexOf ("truncated-200") + 15, html.indexOf ("truncated-200") + 150);
+            String[] split = keyWords1.split ("<");
+            company.setKeywordsIndustry (split[0]);
+        }
+        companyRepository.saveAndFlush (company);
+        writeToFileCompanyId (company.getId (), PATH_ACTIVITY);
+    }
+
+    synchronized void writeToFileCompanyId(Long id,
+            Path patch) {
+        try (BufferedWriter writer = Files.newBufferedWriter (patch)) {
+            writer.write (id + " ");
+        } catch (IOException ex) {
+            ex.printStackTrace ();
         }
     }
 }

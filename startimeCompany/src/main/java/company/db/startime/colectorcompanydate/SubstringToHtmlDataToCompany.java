@@ -35,9 +35,9 @@ import java.util.regex.Pattern;
 
 
 @Component
-@SuppressWarnings ( value = "SubstringToHtmlDataToCompany" )
+
 public class SubstringToHtmlDataToCompany {
-    private final Path pathGogle = Paths.get ("/home/black82/Desktop/Company/startimeCompany/src/main/resources/emaigetbyuri.txt");
+    private final Path pathGogle = Paths.get ("classpath:src/main/resources/emaigetbyuri.txt");
     @Autowired
     CompanyRepository companyRepository;
     @Autowired
@@ -351,7 +351,7 @@ public class SubstringToHtmlDataToCompany {
         }
         driver.close ();
         Matcher matcher = p.matcher (inputHTMLToWebDrive);
-        Set<String> emails = new HashSet<String> ();
+        Set<String> emails = new HashSet<> ();
         if (inputHTMLToWebDrive.contains ("mailto")) {
             String mailto = validatorToEmail (inputHTMLToWebDrive.substring (inputHTMLToWebDrive.indexOf ("mailto") + 7, inputHTMLToWebDrive
                     .indexOf ("mailto") + 50));

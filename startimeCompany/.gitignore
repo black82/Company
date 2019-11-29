@@ -36,3 +36,4 @@ add on 3.3.19
 
 /.project
 /*.stackdump
+/src/main/resources/templates/
