@@ -1,7 +1,5 @@
 package company.db.startime.controler;
 
-import company.db.startime.colectorcompanydate.Colector;
-import company.db.startime.colectorcompanydate.SubstringToHtmlDataToCompany;
 import company.db.startime.model.Company;
 import company.db.startime.model.CompanyDTO;
 import company.db.startime.service.CompanyService;
@@ -20,14 +18,10 @@ import java.util.List;
 public class CompanyRestControler {
     @Autowired
     CompanyService companyService;
-    @Autowired
-    Colector colector;
-    @Autowired
-    SubstringToHtmlDataToCompany substringToHtmlDataToCompany;
 
     @GetMapping ( "/{cyti}" )
-    public List<Company> getByRegistr(@PathVariable String cyti) {
-        return companyService.getOllCompanyByCity (cyti);
+    public ResponseEntity<List<CompanyDTO>> getByRegistr(@PathVariable String cyti) {
+        return ResponseEntity.ok (companyService.getOllCompanyByCity (cyti));
     }
 
     @GetMapping ( "/get/{id}" )
@@ -62,21 +56,6 @@ public class CompanyRestControler {
         companyService.insertOfficerToCompany (id);
     }
 
-    @GetMapping ( "/col/{id}" )
-    public Boolean colectstart(@PathVariable Long id) {
-        return colector.startColector (id);
-    }
-
-    @GetMapping ( "/google/{id}" )
-    public void colectToGoogle(@PathVariable Long id) {
-        substringToHtmlDataToCompany.iterateToGoogleSearch (id);
-    }
-
-    @GetMapping ( "/activity/{id}" )
-    public void activitiCompanyToHtml(@PathVariable Long id) {
-        colector.interactToCatalogCutToDataBase (id);
-    }
-
     @CrossOrigin ( origins = "http://localhost:4200" )
     @GetMapping ( "/industry/{activity}" )
     public List<CompanyDTO> findByActivity(@PathVariable String activity) {
@@ -87,12 +66,6 @@ public class CompanyRestControler {
     @GetMapping ( "/name/{name}" )
     public ResponseEntity serachByName(@PathVariable String name) {
         return ResponseEntity.ok (companyService.searcByNameCompany (name));
-    }
-
-    @GetMapping ( "new/{id}" )
-    public String companyrefactoring(@PathVariable Long id) {
-        colector.constructnewCompany (id);
-        return "FINIS REFACTORYNG";
     }
 
     @GetMapping ( params = {"address", "activity"},

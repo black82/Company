@@ -6,17 +6,17 @@ import company.db.startime.model.Officer;
 import company.db.startime.model.Worker;
 import company.db.startime.repository.CompanyRepository;
 import company.db.startime.repository.OfficerRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
+@Slf4j
 public class CompanyServiceImpl implements CompanyService {
     private final CompanyRepository companyRepository;
     private final OfficerRepository officerRepository;
@@ -29,15 +29,13 @@ public class CompanyServiceImpl implements CompanyService {
         this.officerRepository = officerRepository;
     }
 
-    public List<Company> getOllCompanyByCity(String city) {
-        List<Company> companies = new ArrayList<> ();
-        companies.add (companyRepository.getOne (1L));
-        companies.add (companyRepository.getOne (2L));
-        companies.add (companyRepository.getOne (3L));
-        companies.add (companyRepository.getOne (4L));
-        companies.add (companyRepository.getOne (6L));
-        companies.add (companyRepository.getOne (7L));
-        return companies;
+    public List<CompanyDTO> getOllCompanyByCity(String city) {
+        log.info ("SearchBayCity = " + city);
+        return companyRepository
+                .findByRegistrar (city)
+                .stream ()
+                .map (company -> modelMapper.map (company, CompanyDTO.class))
+                .collect (Collectors.toList ());
     }
 
     public Company getCompanyById(Long id) {
@@ -84,31 +82,25 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     public List<CompanyDTO> findByActivity(String activity) {
-        ModelMapper modelMapper = new ModelMapper ();
-        List<Company> containing = companyRepository.findCompaniesByActivityContaining (activity);
-        List<Company> keywordsIndustryContaining = companyRepository.findCompaniesByKeywordsIndustryContaining (activity);
-        List<Company> sector_activity = companyRepository.findCompaniesBySicContaining (activity);
-        List<Company> catalog = companyRepository.findCompaniesByCatalogContaining (activity);
-        Set<Company> companyDTOS = new HashSet<> ();
-        companyDTOS.addAll (keywordsIndustryContaining);
-        companyDTOS.addAll (catalog);
-        companyDTOS.addAll (containing);
-        companyDTOS.addAll (sector_activity);
-        return companyDTOS.stream ().map (a -> modelMapper.map (a, CompanyDTO.class)).collect (Collectors.toList ());
+        return companyRepository
+                .findCompanyByActivity (activity)
+                .stream ()
+                .map (company -> modelMapper.map (company, CompanyDTO.class))
+                .collect (Collectors.toList ());
     }
 
     public List<CompanyDTO> searcByNameCompany(String name) {
         return companyRepository
-                .findCompanyByNameContaining (name)
+                .findCompanyByNameContaining ("%" + name + "%")
                 .stream ()
                 .map (a -> modelMapper.map (a, CompanyDTO.class))
                 .collect (Collectors.toList ());
     }
 
-    public List<CompanyDTO> searchBYActyvityAndAddress(String actyvity,
+    public List<CompanyDTO> searchBYActyvityAndAddress(String activity,
             String address) {
         return companyRepository
-                .findCompaniesByRegistered_addressAndActivity (address, "%" + actyvity + "%")
+                .findCompaniesByRegistered_addressAndActivity (address, "%" + activity + "%")
                 .stream ()
                 .map (company -> modelMapper.map (company, CompanyDTO.class))
                 .collect (Collectors.toList ());

@@ -8,7 +8,8 @@ import java.util.List;
 
 @Service
 public interface CompanyService {
-    public List<Company> getOllCompanyByCity(String city);
+
+    List<CompanyDTO> getOllCompanyByCity(String city);
 
     Company getCompanyById(Long id);
 
@@ -24,6 +25,6 @@ public interface CompanyService {
 
     List<CompanyDTO> searcByNameCompany(String name);
 
-    List<CompanyDTO> searchBYActyvityAndAddress(String actyvity,
+    List<CompanyDTO> searchBYActyvityAndAddress(String activity,
             String address);
 }
