@@ -24,4 +24,6 @@ public interface CompanyService {
 
     List<CompanyDTO> searcByNameCompany(String name);
 
+    List<CompanyDTO> searchBYActyvityAndAddress(String actyvity,
+            String address);
 }

@@ -1,6 +1,5 @@
 package company.db.startime.colectorcompanydate;
 
-import company.db.startime.clientorchideaconection.Status;
 import company.db.startime.model.*;
 import company.db.startime.repository.CompanyActivityRepository;
 import company.db.startime.repository.CompanyRepository;
@@ -74,7 +73,7 @@ public class Colector {
         return string.replaceAll (" ", "%20").trim ();
     }
 
-    private Path PATH_ACTIVITY = Paths.get ("classpath:src/main/resources/activyty.txt");
+    private Path PATH_ACTIVITY = Paths.get ("activyty.txt");
 
     private String cutUrlToHtml(String html) {
         if (html.contains ("LM-LIST-CLICKS")) {
@@ -216,22 +215,20 @@ public class Colector {
 
     }
 
+    private Path path = Paths.get ("webcollect.txt");
 
     private void secondUrlToCompany(String url,
             Company companies) {
         String htmlFirstPage;
-        if (companies.getRegisteredoffice ().equals ("Berlin")) {
-            writeToFileCompanyId (companies.getId (), path);
-        }
-        Status status = substringToHtmlDataToCompany.connectionSeleniumTor (url);
-        htmlFirstPage = substringToHtmlDataToCompany.ceskStausconectium (status, url);
+
+        writeToFileCompanyId (companies.getId (), path);
+
+        htmlFirstPage = substringToHtmlDataToCompany.connectionSeleniumTor (url);
         String urlToCompanyPage = cutUrlToHtml (htmlFirstPage);
         if (!urlToCompanyPage.equals (" ")) {
             coletAndSaveDate (companies, urlToCompanyPage);
         }
     }
-
-    private Path path = Paths.get ("classpath:src/main/resources/webcolect.txt");
 
     private void colectionDataCompany(Company one) {
         String land = null;

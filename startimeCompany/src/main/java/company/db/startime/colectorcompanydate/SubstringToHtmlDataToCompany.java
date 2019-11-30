@@ -7,13 +7,14 @@ import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.client.urlconnection.HTTPSProperties;
 import company.db.startime.clientorchideaconection.ClientOrhidea;
-import company.db.startime.clientorchideaconection.Status;
 import company.db.startime.model.Company;
 import company.db.startime.repository.CompanyRepository;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.*;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +22,8 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.ws.rs.core.MediaType;
+import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
@@ -49,15 +52,15 @@ public class SubstringToHtmlDataToCompany {
     // Cut to html cod interest value  and set to company
     public Company substringHtml(Company company,
             String url) {
-        String html = ceskStausconectium (connectionSeleniumTor (url), url);
+        String html = connectionSeleniumTor (url);
         company.setHtml (html);
         companyRepository.save (company);
-        String telephon = " ";
-        String fax = " ";
-        String url1 = " ";
-        String grown_out = " ";
-        String sic = " ";
-        String kapital = " ";
+        String telephon = "";
+        String fax = "";
+        String url1 = "";
+        String grown_out = "";
+        String sic = "";
+        String kapital = "";
         if (html.contains ("og:phone_number")) {
             telephon = html.substring (html.indexOf ("og:phone_number", 1) + 26, html.indexOf ("og:phone_number", 1) + 40);
         }
@@ -81,16 +84,6 @@ public class SubstringToHtmlDataToCompany {
         colector.cutCatalogByIndustri (company, html);
 
         return company;
-    }
-
-    public String ceskStausconectium(Status status,
-            String url) {
-        if (status.getB ()) {
-            return status.getS ();
-        }
-        else { connectionSeleniumTor (url); }
-
-        return null;
     }
 
     private Company setComapanyValuie(String telephon,
@@ -373,24 +366,58 @@ public class SubstringToHtmlDataToCompany {
     }
 
     //Connection Selenium Tor
-    public Status connectionSeleniumTor(String url) {
-        Status status = orhidea.conectionTorProxy (url);
-        if (status.getB ()) {
-
-            try {
-                Thread.sleep (5000);
-                orhidea.kilProces ("sudo service tor restart");
-                Thread.sleep (10000);
-            } catch (InterruptedException e) {
-                e.printStackTrace ();
-            }
-            orhidea.kilProces ("sudo service tor start");
+    public String connectionSeleniumTor(String url) {
+        System.setProperty ("webdriver.gecko.driver", "/home/black/Загрузки/geckodriver-v0.26.0-linux64/geckodriver");
+        WebDriver driver;
+        FirefoxProfile profile = setingFirefoxProfil ();
+        DesiredCapabilities cap = new DesiredCapabilities ();
+        FirefoxBinary firefoxBinary = new FirefoxBinary ();
+        GeckoDriverService service = new GeckoDriverService.Builder (firefoxBinary)
+                .usingDriverExecutable (new File ("/home/black/Загрузки/geckodriver-v0.26.0-linux64/geckodriver"))
+                .usingAnyFreePort ()
+                .build ();
+        try {
+            service.start ();
+        } catch (IOException e) {
+            e.printStackTrace ();
         }
-        return status;
+
+        FirefoxOptions options = new FirefoxOptions (cap).setBinary (firefoxBinary).setProfile (profile);
+
+        driver = new FirefoxDriver (options);
+        try {
+            driver.get (url);
+            return driver.getPageSource ();
+        } finally {
+            driver.quit ();
+            if (service.isRunning ()) {
+                service.stop ();
+            }
+        }
 
     }
 
+    public FirefoxProfile setingFirefoxProfil() {
+        FirefoxProfile ff_prof = new FirefoxProfile ();
 
+        ff_prof.setPreference ("places.history.enabled", false);
+        ff_prof.setPreference ("privacy.clearOnShutdown.offlineApps", true);
+        ff_prof.setPreference ("privacy.clearOnShutdown.passwords", true);
+        ff_prof.setPreference ("privacy.clearOnShutdown.siteSettings", true);
+        ff_prof.setPreference ("privacy.sanitize.sanitizeOnShutdown", true);
+        ff_prof.setPreference ("signon.rememberSignons", false);
+        ff_prof.setPreference ("network.cookie.lifetimePolicy", 2);
+        ff_prof.setPreference ("network.dns.disablePrefetch", true);
+        ff_prof.setPreference ("network.http.sendRefererHeader", 0);
+        ff_prof.setPreference ("network.proxy.type", 1);
+        ff_prof.setPreference ("network.proxy.socks_version", 5);
+        ff_prof.setPreference ("network.proxy.socks", "127.0.0.1");
+        ff_prof.setPreference ("network.proxy.socks_port", 9050);
+        ff_prof.setPreference ("network.proxy.socks_remote_dns", true);
+        ff_prof.setPreference ("permissions.default.image", 2);
+
+        return ff_prof;
+    }
 }
 
 

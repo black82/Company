@@ -104,4 +104,14 @@ public class CompanyServiceImpl implements CompanyService {
                 .map (a -> modelMapper.map (a, CompanyDTO.class))
                 .collect (Collectors.toList ());
     }
+
+    public List<CompanyDTO> searchBYActyvityAndAddress(String actyvity,
+            String address) {
+        return companyRepository
+                .findCompaniesByRegistered_addressAndActivity (address, "%" + actyvity + "%")
+                .stream ()
+                .map (company -> modelMapper.map (company, CompanyDTO.class))
+                .collect (Collectors.toList ());
+    }
 }
+

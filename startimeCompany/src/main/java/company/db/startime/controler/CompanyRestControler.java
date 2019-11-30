@@ -7,6 +7,8 @@ import company.db.startime.model.CompanyDTO;
 import company.db.startime.service.CompanyService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,12 +25,12 @@ public class CompanyRestControler {
     @Autowired
     SubstringToHtmlDataToCompany substringToHtmlDataToCompany;
 
-    @GetMapping( "/{cyti}" )
-    public List <Company> getByRegistr(@PathVariable String cyti) {
+    @GetMapping ( "/{cyti}" )
+    public List<Company> getByRegistr(@PathVariable String cyti) {
         return companyService.getOllCompanyByCity (cyti);
     }
 
-    @GetMapping( "/get/{id}" )
+    @GetMapping ( "/get/{id}" )
     @CrossOrigin ( origins = "http://localhost:4200" )
     public CompanyDTO getById(@PathVariable Long id) {
         ModelMapper modelMapper = new ModelMapper ();
@@ -37,19 +39,19 @@ public class CompanyRestControler {
     }
 
     @CrossOrigin ( origins = "http://localhost:4200" )
-    @GetMapping( "/get1000/{city}" )
-    public List <Company> getFirst1000ByCity(@PathVariable String city) {
+    @GetMapping ( "/get1000/{city}" )
+    public List<Company> getFirst1000ByCity(@PathVariable String city) {
         List<Company> first1000ByCity = companyService.getFirst1000ByRegister_Officer (city);
         System.out.println (first1000ByCity);
         return first1000ByCity;
     }
 
-    @GetMapping( "get1000byofficer/{register_officer}" )
-    public List <Company> getByRegisterOfficer(@PathVariable String register_officer) {
+    @GetMapping ( "get1000byofficer/{register_officer}" )
+    public List<Company> getByRegisterOfficer(@PathVariable String register_officer) {
         return companyService.getFirst1000ByRegister_Officer (register_officer);
     }
 
-    @GetMapping( "/getByName/{name}" )
+    @GetMapping ( "/getByName/{name}" )
     public Company findByCompany(@PathVariable String name) {
         return companyService.findByNameCompany (name);
     }
@@ -60,12 +62,12 @@ public class CompanyRestControler {
         companyService.insertOfficerToCompany (id);
     }
 
-    @GetMapping( "/col/{id}" )
+    @GetMapping ( "/col/{id}" )
     public Boolean colectstart(@PathVariable Long id) {
         return colector.startColector (id);
     }
 
-    @GetMapping( "/google/{id}" )
+    @GetMapping ( "/google/{id}" )
     public void colectToGoogle(@PathVariable Long id) {
         substringToHtmlDataToCompany.iterateToGoogleSearch (id);
     }
@@ -83,14 +85,22 @@ public class CompanyRestControler {
 
     @CrossOrigin ( origins = "http://localhost:4200" )
     @GetMapping ( "/name/{name}" )
-    public List<CompanyDTO> serachByName(@PathVariable String name) {
-        return companyService.searcByNameCompany (name);
+    public ResponseEntity serachByName(@PathVariable String name) {
+        return ResponseEntity.ok (companyService.searcByNameCompany (name));
     }
 
     @GetMapping ( "new/{id}" )
     public String companyrefactoring(@PathVariable Long id) {
         colector.constructnewCompany (id);
         return "FINIS REFACTORYNG";
+    }
+
+    @GetMapping ( params = {"address", "activity"},
+            value = "search/" )
+    public ResponseEntity findBYAddressAndActivity(@Param ( "address" ) String address,
+            @Param ( "activity" ) String activity) {
+        return ResponseEntity.ok ().body (companyService.searchBYActyvityAndAddress (activity, address));
+
     }
 }
 
