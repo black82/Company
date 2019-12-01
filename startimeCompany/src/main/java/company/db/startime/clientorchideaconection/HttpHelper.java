@@ -16,7 +16,7 @@ import org.apache.http.ssl.SSLContexts;
 import javax.net.ssl.SSLContext;
 import java.io.IOException;
 import java.net.*;
-
+//Deprecate
 
 public final class HttpHelper {
     public static CloseableHttpClient createClient() {

@@ -6,9 +6,10 @@ import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.client.urlconnection.HTTPSProperties;
-import company.db.startime.clientorchideaconection.ClientOrhidea;
 import company.db.startime.model.Company;
 import company.db.startime.repository.CompanyRepository;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -38,20 +39,18 @@ import java.util.regex.Pattern;
 
 
 @Component
-
 public class SubstringToHtmlDataToCompany {
     private final Path pathGogle = Paths.get ("classpath:src/main/resources/emaigetbyuri.txt");
     @Autowired
     CompanyRepository companyRepository;
     @Autowired
     Colector colector;
-    @Autowired
-    ClientOrhidea orhidea;
-
+    private static final Logger LOGGER = LogManager.getLogger (SubstringToHtmlDataToCompany.class.getName ());
 
     // Cut to html cod interest value  and set to company
     public Company substringHtml(Company company,
             String url) {
+        LOGGER.error ("company collect company ID=" + company.getId ());
         String html = connectionSeleniumTor (url);
         company.setHtml (html);
         companyRepository.save (company);
@@ -99,6 +98,7 @@ public class SubstringToHtmlDataToCompany {
         company.setUrl (validatorUrl (url1));
         company.setFax (validatorTelephoneFax (fax));
         company.setTelephone (validatorTelephoneFax (telephon));
+        LOGGER.info ("company collect company ID=" + company.getId ());
         return company;
     }
 
@@ -229,7 +229,7 @@ public class SubstringToHtmlDataToCompany {
         return html;
     }
 
-    //check wep Pages company to contain tag mailto
+    //check wep Page company  contain tag mailto
     public String colectMailToWebSite(String url) {
         if (url.contains (String.valueOf ('"'))) {
             String[] split = url.split (String.valueOf ('"'));
@@ -245,7 +245,7 @@ public class SubstringToHtmlDataToCompany {
     }
 
     // Search to google fry case to catch company email&url
-    public void searchToGoogleCompanyWebPagesAndEmail(Company company) {
+    private void searchToGoogleCompanyWebPagesAndEmail(Company company) {
         String registered_address = " ";
         String urlToGoogle = " ";
         if (company.getRegistered_address () != null) {
@@ -287,7 +287,7 @@ public class SubstringToHtmlDataToCompany {
     }
 
     // Used Web Driver  search to google web pages company with (name and address)
-    public String colectToGoogle(String registered_address,
+    private String colectToGoogle(String registered_address,
             String nameCompany,
             Long id) {
         System.setProperty ("java.net.preferIPv4Stack", "true");
@@ -389,6 +389,7 @@ public class SubstringToHtmlDataToCompany {
             driver.get (url);
             return driver.getPageSource ();
         } finally {
+            kilProces ("sudo service tor restart");
             driver.quit ();
             if (service.isRunning ()) {
                 service.stop ();
@@ -397,7 +398,7 @@ public class SubstringToHtmlDataToCompany {
 
     }
 
-    public FirefoxProfile setingFirefoxProfil() {
+    private FirefoxProfile setingFirefoxProfil() {
         FirefoxProfile ff_prof = new FirefoxProfile ();
 
         ff_prof.setPreference ("places.history.enabled", false);
@@ -418,7 +419,19 @@ public class SubstringToHtmlDataToCompany {
 
         return ff_prof;
     }
+
+    private void kilProces(String comant) {
+        ProcessBuilder pbuilder = new ProcessBuilder ("bash", "-c", comant);
+        File err = new File ("err.txt");
+        try {
+            pbuilder.redirectError (err);
+            Process p = pbuilder.start ();
+        } catch (Exception e) {
+            e.printStackTrace ();
+        }
+    }
 }
+
 
 
 
