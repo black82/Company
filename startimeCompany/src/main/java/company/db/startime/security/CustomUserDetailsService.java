@@ -1,10 +1,13 @@
 package company.db.startime.security;
 
+
 import company.db.startime.model.AuthBody;
 import company.db.startime.model.Role;
 import company.db.startime.model.Users;
 import company.db.startime.repository.RoleRepository;
 import company.db.startime.repository.UserRepository;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -22,6 +25,7 @@ import java.util.*;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
+    private static final Logger LOGGER = LogManager.getLogger (CustomUserDetailsService.class.getName ());
 
     @Autowired
     AuthenticationManager authenticationManager;
@@ -51,6 +55,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             Map<Object, Object> model = new HashMap<> ();
             model.put ("username", username);
             model.put ("token", token);
+            LOGGER.info ("Login user name =" + data.getEmail ());
             return model;
         } catch (AuthenticationException e) {
             throw new BadCredentialsException ("Invalid email/password supplied");
@@ -65,6 +70,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         saveUser (users);
         Map<Object, Object> model = new HashMap<> ();
         model.put ("message", "Users registered successfully");
+        LOGGER.info ("Login user name =" + users.getFullname () + "User email = " + users.getEmail ());
         return model;
     }
 

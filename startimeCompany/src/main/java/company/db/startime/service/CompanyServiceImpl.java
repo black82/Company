@@ -6,22 +6,22 @@ import company.db.startime.model.Officer;
 import company.db.startime.model.Worker;
 import company.db.startime.repository.CompanyRepository;
 import company.db.startime.repository.OfficerRepository;
-import lombok.extern.slf4j.Slf4j;
+import company.db.startime.security.CustomUserDetailsService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-@Slf4j
 public class CompanyServiceImpl implements CompanyService {
     private final CompanyRepository companyRepository;
     private final OfficerRepository officerRepository;
     private ModelMapper modelMapper = new ModelMapper ();
-
+    private static final Logger LOGGER = LogManager.getLogger (CustomUserDetailsService.class.getName ());
     @Autowired
     public CompanyServiceImpl(CompanyRepository companyRepository,
             OfficerRepository officerRepository) {
@@ -30,7 +30,7 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     public List<CompanyDTO> getOllCompanyByCity(String city) {
-        log.info ("SearchBayCity = " + city);
+        LOGGER.info ("SearchBayCity = " + city);
         return companyRepository
                 .findByRegistrar (city)
                 .stream ()
@@ -43,15 +43,14 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     public List<CompanyDTO> getFirst1000ByCity(String city) {
-        List<Company> companies = new ArrayList<> ();
-        companies.add (companyRepository.getOne (1L));
-        companies.add (companyRepository.getOne (2L));
-        companies.add (companyRepository.getOne (3L));
-        companies.add (companyRepository.getOne (4L));
-        companies.add (companyRepository.getOne (6L));
-        companies.add (companyRepository.getOne (7L));
-        return companies.stream ().map (a -> modelMapper.map (a, CompanyDTO.class)).collect (Collectors.toList ());
+        LOGGER.error ("Search by city " + city);
+        return companyRepository
+                .findByRegistrar (city)
+                .stream ()
+                .map (company -> modelMapper.map (company, CompanyDTO.class))
+                .collect (Collectors.toList ());
     }
+
 
     public List<Company> getFirst1000ByRegister_Officer(String register_officer) {
         return companyRepository.findByRegisteredoffice (register_officer);

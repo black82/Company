@@ -10,9 +10,11 @@ import java.util.List;
 
 @Repository
 public interface CompanyRepository extends JpaRepository<Company, Long> {
-    @Query ( value = "SELECT *from company com where com.registrar=(:city) order by com.name",
+
+    @Query ( value = "SELECT  *FROM company com where com.registrar=(:city) order by com.name LIMIT 10",
             nativeQuery = true )
     List<Company> findByRegistrar(@Param ( "city" ) String city);
+
     List<Company> findByRegisteredoffice(String registered_office);
 
     Company findByName(String name);
