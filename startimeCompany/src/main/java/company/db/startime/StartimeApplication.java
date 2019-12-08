@@ -1,6 +1,7 @@
 package company.db.startime;
 
 
+import org.apache.log4j.PropertyConfigurator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -8,10 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class StartimeApplication {
 
     public static void main(String[] args)  {
-        System.setProperty ("-DLog4jContextSelector", "org.apache.logging.log4j.core.async.AsyncLoggerContextSelector");
+        PropertyConfigurator.configure ("log4j.properties");
         SpringApplication.run(StartimeApplication.class, args);
-
-
-
     }
 }

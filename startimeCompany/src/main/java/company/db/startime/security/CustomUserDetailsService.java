@@ -6,8 +6,8 @@ import company.db.startime.model.Role;
 import company.db.startime.model.Users;
 import company.db.startime.repository.RoleRepository;
 import company.db.startime.repository.UserRepository;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -70,7 +70,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         saveUser (users);
         Map<Object, Object> model = new HashMap<> ();
         model.put ("message", "Users registered successfully");
-        LOGGER.info ("Login user name =" + users.getFullname () + "User email = " + users.getEmail ());
+        LOGGER.info ("Register user name =" + users.getFullname () + "User email = " + users.getEmail ());
         return model;
     }
 

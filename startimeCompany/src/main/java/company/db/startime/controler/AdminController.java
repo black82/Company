@@ -34,4 +34,5 @@ public class AdminController {
         colector.constructnewCompany (id);
         return "FINIS REFACTORYNG";
     }
+
 }

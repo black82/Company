@@ -6,7 +6,6 @@ import company.db.startime.repository.CompanyRepository;
 import company.db.startime.repository.NewCompanyPojoRepository;
 import company.db.startime.repository.OfficerRepository;
 import company.db.startime.service.CompanyActivityList;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -165,18 +164,18 @@ public class Colector {
 
     }
 
-    public List<Worker> constructWorker(Company company) {
-        ModelMapper modelMapper = new ModelMapper ();
-        List<Officer> byCompany_id = officerRepository.findByNumer (company.getCompany_number ());
-        if (byCompany_id != null) {
-            List<Worker> officerByCompanies = byCompany_id
-                    .stream ()
-                    .map (a -> modelMapper.map (a, Worker.class))
-                    .collect (Collectors.toList ());
-            return officerByCompanies;
-        }
-        return null;
-    }
+    //    public List<Worker> constructWorker(Company company) {
+    //        ModelMapper modelMapper = new ModelMapper ();
+    //        List<Officer> byCompany_id = officerRepository.findFirstByNumer (company.getCompany_number ());
+    //        if (byCompany_id != null) {
+    //            List<Worker> officerByCompanies = byCompany_id
+    //                    .stream ()
+    //                    .map (a -> modelMapper.map (a, Worker.class))
+    //                    .collect (Collectors.toList ());
+    //            return officerByCompanies;
+    //        }
+    //        return null;
+    //    }
 
     public List<CompanyActivyty> create(Company company,
             NewCompanyPojo companyPojo) {

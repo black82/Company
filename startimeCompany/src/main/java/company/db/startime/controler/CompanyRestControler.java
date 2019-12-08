@@ -51,10 +51,10 @@ public class CompanyRestControler {
     }
 
 
-    @GetMapping ( "/officer/{id}" )
-    public void colecter(@PathVariable Long id) {
-        companyService.insertOfficerToCompany (id);
-    }
+    //    @GetMapping ( "/officer/{id}" )
+    //    public void colecter(@PathVariable Long id) {
+    //        companyService.insertOfficerToCompany (id);
+    //    }
 
     @CrossOrigin ( origins = "http://localhost:4200" )
     @GetMapping ( "/industry/{activity}" )

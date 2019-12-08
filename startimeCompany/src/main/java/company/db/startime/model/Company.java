@@ -3,12 +3,9 @@ package company.db.startime.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
 import java.util.Set;
 
 @Data
@@ -43,12 +40,9 @@ public class Company implements Serializable {
     private String fax;
     private String url;
     private String sector_of_activity;
-    @OneToMany ( cascade = CascadeType.ALL )
-    @LazyCollection ( LazyCollectionOption.FALSE )
-    @JoinTable ( name = "COMPANY_OFFICER",
-            joinColumns = {@JoinColumn ( name = "COMPANY_ID" )},
-            inverseJoinColumns = {@JoinColumn ( name = "OFFICER_ID" )} )
-    private List<Worker> officers;
+    @OneToOne ( fetch = FetchType.LAZY )
+    @JoinColumn ( name = "id" )
+    private Officer officers;
     private String sic;
     private String kapital;
     private String email;

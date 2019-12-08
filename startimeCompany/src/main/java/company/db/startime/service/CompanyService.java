@@ -19,8 +19,6 @@ public interface CompanyService {
 
     Company findByNameCompany(String name);
 
-    void insertOfficerToCompany(Long id);
-
     List<CompanyDTO> findByActivity(String activity);
 
     List<CompanyDTO> searcByNameCompany(String name);

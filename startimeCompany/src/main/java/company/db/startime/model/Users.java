@@ -19,15 +19,20 @@ public class Users implements Serializable {
     @Column ( name = "id" )
     @GeneratedValue ( strategy = GenerationType.AUTO )
     private Long id;
+
     @Column ( unique = true,
             name = "EMAIL_USER" )
     private String email;
+
     @Column ( name = "PASSWORD_USER" )
     private String password;
+
     @Column ( name = "FULLNAME_USERS" )
     private String fullname;
+
     @Column ( name = "ENABLED_USER" )
     private boolean enabled;
+
     @OneToMany ( cascade = CascadeType.ALL,
             orphanRemoval = true,
             fetch = FetchType.EAGER )

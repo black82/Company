@@ -11,29 +11,20 @@
     <groupId>company.DB</groupId>
     <artifactId>startime</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>CompanyDataBass</name>
-    <description>StartTime APP</description>
+    <name>Company DataBase</name>
+    <description>A service provider will perform a database search of Company's after some parameters and send them to
+        Json via Rest API.
+    </description>
+
     <properties>
         <java.version>1.8</java.version>
     </properties>
-
     <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
             <version>1.1.1</version>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -41,6 +32,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-freemarker</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -119,19 +116,11 @@
             <artifactId>orchid</artifactId>
             <version>1.2.1</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.silvertunnel-ng/netlib -->
-        <dependency>
-            <groupId>org.silvertunnel-ng</groupId>
-            <artifactId>netlib</artifactId>
-            <version>0.0.4</version>
-        </dependency>
-
         <dependency>
             <groupId>org.java-websocket</groupId>
             <artifactId>Java-WebSocket</artifactId>
             <version>1.4.0</version>
         </dependency>
-
         <dependency>
             <groupId>int.esa.ccsds.mo</groupId>
             <artifactId>TRANSPORT_TCPIP</artifactId>
@@ -152,20 +141,21 @@
             <version>0.9.1</version>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-log4j2</artifactId>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.6</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.5</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
+            <groupId>com.jcabi</groupId>
+            <artifactId>jcabi-log</artifactId>
+            <version>0.17.4</version>
         </dependency>
-
     </dependencies>
-
     <build>
         <plugins>
             <plugin>

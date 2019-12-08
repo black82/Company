@@ -8,8 +8,6 @@ import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.client.urlconnection.HTTPSProperties;
 import company.db.startime.model.Company;
 import company.db.startime.repository.CompanyRepository;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -45,12 +43,12 @@ public class SubstringToHtmlDataToCompany {
     CompanyRepository companyRepository;
     @Autowired
     Colector colector;
-    private static final Logger LOGGER = LogManager.getLogger (SubstringToHtmlDataToCompany.class.getName ());
+
 
     // Cut to html cod interest value  and set to company
     public Company substringHtml(Company company,
             String url) {
-        LOGGER.error ("company collect company ID=" + company.getId ());
+
         String html = connectionSeleniumTor (url);
         company.setHtml (html);
         companyRepository.save (company);
@@ -98,7 +96,7 @@ public class SubstringToHtmlDataToCompany {
         company.setUrl (validatorUrl (url1));
         company.setFax (validatorTelephoneFax (fax));
         company.setTelephone (validatorTelephoneFax (telephon));
-        LOGGER.info ("company collect company ID=" + company.getId ());
+
         return company;
     }
 
