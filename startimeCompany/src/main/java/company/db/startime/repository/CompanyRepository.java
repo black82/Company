@@ -11,15 +11,15 @@ import java.util.List;
 @Repository
 public interface CompanyRepository extends JpaRepository<Company, Long> {
 
-    @Query ( value = "SELECT  *FROM company com where com.registrar=(:city) order by com.name LIMIT 10",
+    @Query ( value = "SELECT * from NEWCOMPANY c join ADDRESS_COMPANY AC on c.ADDRESS_ID = AC.ADDRESS_ID and AC.registeredoffice= (:city) order by c.name LIMIT 10",
             nativeQuery = true )
     List<Company> findByRegistrar(@Param ( "city" ) String city);
 
-    List<Company> findByRegisteredoffice(String registered_office);
+
 
     Company findByName(String name);
 
-    @Query ( value = "SELECT *FROM company c WHERE c.activity LIKE (:activity) OR c.sic LIKE (:activity) OR c.catalog LIKE (:activity) order by c.name",
+    @Query ( value = "SELECT * FROM NEWCOMPANY C left outer join COMPANY_TO_ACTIVITY CTA on C.COMPANY_ID = CTA.COMPANY_ID AND CTA.COMPANY_ACTIVITY=(:activity) order by C.NAME",
             nativeQuery = true )
     List<Company> findCompanyByActivity(@Param ( "activity" ) String activity);
 
@@ -28,7 +28,7 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
             nativeQuery = true )
     List<Company> findCompanyByNameContaining(@Param ( "name" ) String name);
 
-    @Query ( value = "SELECT  *FROM company c WHERE c.registered_address=(:address) AND c.activity LIKE (:activity) OR c.sic LIKE (:activity) OR c.catalog LIKE (:activity) order by c.name ",
+    @Query ( value = "SELECT *FROM NEWCOMPANY C left outer join COMPANY_TO_ACTIVITY CTA on C.COMPANY_ID = CTA.COMPANY_ID AND CTA.COMPANY_ACTIVITY = (:activity) left outer join ADDRESS_COMPANY AC on C.ADDRESS_ID = AC.ADDRESS_ID AND AC.registrar = (:address) order by c.name ",
             nativeQuery = true )
     List<Company> findCompaniesByRegistered_addressAndActivity(@Param ( "address" ) String address,
             @Param ( "activity" ) String activity);

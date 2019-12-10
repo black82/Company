@@ -11,7 +11,7 @@ public interface CompanyService {
 
     List<CompanyDTO> getOllCompanyByCity(String city);
 
-    Company getCompanyById(Long id);
+    CompanyDTO getCompanyById(Long id);
 
     List<CompanyDTO> getFirst1000ByCity(String city);
 

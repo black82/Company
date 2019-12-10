@@ -29,10 +29,4 @@ public class AdminController {
         colector.interactToCatalogCutToDataBase (id);
     }
 
-    @GetMapping ( "new/{id}" )
-    public String companyrefactoring(@PathVariable Long id) {
-        colector.constructnewCompany (id);
-        return "FINIS REFACTORYNG";
-    }
-
 }

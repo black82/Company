@@ -20,10 +20,11 @@ public class CompanyActivyty {
     @GeneratedValue ( strategy = GenerationType.IDENTITY )
     @Column ( name = "ACTIVITY_ID" )
     Long activityID;
+    @Column ( name = "TYPEACTIVITY" )
     String typeActivity;
 
     @ManyToMany ( cascade = {CascadeType.PERSIST, CascadeType.MERGE},
             mappedBy = "companyActivyties" )
-    private List<NewCompanyPojo> newCompanyPoj = new ArrayList<> ();
+    private List<Company> newCompanyPoj = new ArrayList<> ();
 
 }

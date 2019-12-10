@@ -2,58 +2,95 @@ package company.db.startime.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
-@Table ( name = "company" )
+@Table ( name = "NEWCOMPANY" )
 @NoArgsConstructor
 @AllArgsConstructor
-public class Company implements Serializable {
+@EqualsAndHashCode
+public class Company implements Serializable, Cloneable {
     @Id
-    @GeneratedValue ( strategy = GenerationType.SEQUENCE )
+    @Column ( name = "COMPANY_ID" )
+    @GeneratedValue ( strategy = GenerationType.IDENTITY )
     private Long id;
+    @Column ( name = "COMPANY_NUMBER",
+            length = 50 )
     private String company_number;
+    @Column ( name = "CURRENT_STATUS",
+            length = 20 )
     private String current_status;
+    @Column ( name = "JURISDICTION_CODE",
+            length = 10 )
     private String jurisdiction_code;
+    @Column ( name = "NAME" )
     private String name;
-    private String registered_address;
+    @Column ( name = "RETRIEVED_AT",
+            length = 25 )
     private String retrieved_at;
+    @Column ( name = "REGISTER_FLAG_AD" )
     private Boolean register_flag_AD;
+    @Column ( name = "REGISTER_FLAG_CD" )
+
     private Boolean register_flag_CD;
+    @Column ( name = "REGISTER_FLAG_DK" )
     private Boolean register_flag_DK;
+    @Column ( name = "REGISTER_FLAG_HD" )
     private Boolean register_flag_HD;
+    @Column ( name = "REGISTER_FLAG_UT" )
     private Boolean register_flag_UT;
+    @Column ( name = "REGISTER_FLAG_VOE" )
     private Boolean register_flag_VOE;
+    @Column ( name = "NATIVE_COMPANY_NUMBER",
+            length = 100 )
     private String native_company_number;
-    private String registeredoffice;
-    private String registrar;
-    private String register_art;
-    private String register_nummer;
-    private String former_registrar;
-    private String register_flag_Status_information;
-    private String telephone;
-    private String fax;
-    private String url;
-    private String sector_of_activity;
-    @OneToOne ( fetch = FetchType.LAZY )
-    @JoinColumn ( name = "id" )
-    private Officer officers;
-    private String sic;
-    private String kapital;
-    private String email;
-    private String web2Url;
-    private String html;
-    private String googleUri;
-    private String googleEmail;
-    @ElementCollection
-    private Set<String> emails;
+    @OneToOne ( targetEntity = AddressCompany.class,
+            cascade = CascadeType.ALL )
+    @JoinColumn ( name = "ADDRESS_ID" )
+
+    private AddressCompany addressCompany;
+    @ManyToMany ( cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY )
+    @LazyCollection ( LazyCollectionOption.TRUE )
+    @JoinTable ( name = "COMPANY_TO_OFFICER",
+            joinColumns = {@JoinColumn ( name = "COMPANY_ID" )},
+            inverseJoinColumns = {@JoinColumn ( name = "OFFICER_ID" )} )
+
+    private List<Officer> officers = new ArrayList<> ();
+    @Column ( name = "KEY_WORD_INDUSTRY",
+            length = 150 )
     private String keywordsIndustry;
+    @Column ( name = "CATALOG_INDUSTRY_BRANCH",
+            length = 200 )
     private String catalog;
+    @Column ( name = "ACTYVITY_TEXT" )
     private String activity;
 
+    @ManyToMany ( cascade = {CascadeType.PERSIST, CascadeType.MERGE} )
+    @Fetch ( value = FetchMode.JOIN )
+    @JoinTable ( name = "COMPANY_TO_ACTIVITY",
+            joinColumns = {@JoinColumn ( name = "COMPANY_ID" )},
+            inverseJoinColumns = {@JoinColumn ( name = "COMPANY_ACTIVITY" )} )
+    private List<CompanyActivyty> companyActivyties = new ArrayList<> ();
+
+    @OneToOne ( targetEntity = ContactCompany.class,
+            cascade = CascadeType.ALL )
+    @JoinColumn ( name = "CONTACT_ID" )
+
+    private ContactCompany contactCompany;
+    @Column ( length = 20000 )
+    private String html;
+    private String capital;
+    private String sic;
 }

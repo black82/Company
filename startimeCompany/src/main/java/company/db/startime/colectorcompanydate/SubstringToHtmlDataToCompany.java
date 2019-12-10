@@ -91,11 +91,11 @@ public class SubstringToHtmlDataToCompany {
             String kapital,
             Company company) {
         company.setSic (validatorSic (sic));
-        company.setKapital (validatorKapital (kapital));
-        company.setSector_of_activity (validatorGrownOut (grown_out));
-        company.setUrl (validatorUrl (url1));
-        company.setFax (validatorTelephoneFax (fax));
-        company.setTelephone (validatorTelephoneFax (telephon));
+        company.setCapital (validatorKapital (kapital));
+        company.setActivity (validatorGrownOut (grown_out));
+        company.getContactCompany ().setUrl (validatorUrl (url1));
+        company.getContactCompany ().setFax (validatorTelephoneFax (fax));
+        company.getContactCompany ().setTelephone (validatorTelephoneFax (telephon));
 
         return company;
     }
@@ -246,26 +246,38 @@ public class SubstringToHtmlDataToCompany {
     private void searchToGoogleCompanyWebPagesAndEmail(Company company) {
         String registered_address = " ";
         String urlToGoogle = " ";
-        if (company.getRegistered_address () != null) {
-            registered_address = company.getRegistered_address ();
+        if (company.getAddressCompany ().getRegistered_address () != null) {
+            registered_address = company.getAddressCompany ().getRegistered_address ();
         }
         else {
-            if (company.getRegistrar () != null && !company.getRegistrar ().isEmpty ()) {
-                registered_address = company.getRegistrar ();
+            if (company.getAddressCompany ().getRegistrar () != null && !company
+                    .getAddressCompany ()
+                    .getRegistrar ()
+                    .isEmpty ()) {
+                registered_address = company.getAddressCompany ().getRegistrar ();
             }
         }
 
         if (!registered_address.equals (" ")) {
             urlToGoogle = colectToGoogle (company.getName (), registered_address, company.getId ());
 
-            if (urlToGoogle.equals (" ") && company.getRegistrar () != null && !company
+            if (urlToGoogle.equals (" ") && company.getAddressCompany ().getRegistrar () != null && !company
+                    .getAddressCompany ()
                     .getRegistrar ()
-                    .isEmpty () && !registered_address.equals (company.getRegistrar ())) {
-                registered_address = company.getRegistrar ();
-                urlToGoogle = colectToGoogle (company.getName (), company.getRegistrar (), company.getId ());
+                    .isEmpty () && !registered_address.equals (company.getAddressCompany ().getRegistrar ())) {
+                registered_address = company.getAddressCompany ().getRegistrar ();
+                urlToGoogle = colectToGoogle (company.getName (), company
+                        .getAddressCompany ()
+                        .getRegistrar (), company.getId ());
             }
-            if (urlToGoogle.equals (" ") && !registered_address.equals (company.getRegisteredoffice ()) && company.getRegisteredoffice () != null) {
-                urlToGoogle = colectToGoogle (company.getName (), company.getRegisteredoffice (), company.getId ());
+            if (urlToGoogle.equals (" ") && !registered_address.equals (company
+                                                                                .getAddressCompany ()
+                                                                                .getRegisteredoffice ()) && company
+                    .getAddressCompany ()
+                    .getRegisteredoffice () != null) {
+                urlToGoogle = colectToGoogle (company.getName (), company
+                        .getAddressCompany ()
+                        .getRegisteredoffice (), company.getId ());
             }
         }
         searchEmailsToGoogleLinkAndSetEmailsToCompanyPojo (urlToGoogle, company);
@@ -275,10 +287,12 @@ public class SubstringToHtmlDataToCompany {
     private void searchEmailsToGoogleLinkAndSetEmailsToCompanyPojo(String urlToGoogle,
             Company company) {
         if (!urlToGoogle.equals (" ")) {
-            company.setGoogleUri (urlToGoogle);
+            company.getContactCompany ().setGoogleUri (urlToGoogle);
             Set<String> emailsToUri = getEmailsToUri (urlToGoogle);
             if (emailsToUri.size () != 0) {
-                if (company.getEmails ().isEmpty ()) company.setEmails (emailsToUri);
+                if (company.getContactCompany ().getEmails ().isEmpty ()) {
+                    company.getContactCompany ().setEmails (emailsToUri);
+                }
             }
             companyRepository.save (company);
         }
@@ -310,9 +324,9 @@ public class SubstringToHtmlDataToCompany {
             Optional<Company> optionalCompany = companyRepository.findById (id);
             if (optionalCompany.isPresent ()) {
                 Company one = optionalCompany.get ();
-                String s = Optional.ofNullable (one.getRegisteredoffice ()).orElse ("");
+                String s = Optional.ofNullable (one.getAddressCompany ().getRegisteredoffice ()).orElse ("");
                 if (!s.isEmpty ()) {
-                    if (one.getRegisteredoffice ().equals ("Berlin")) {
+                    if (one.getAddressCompany ().getRegisteredoffice ().equals ("Berlin")) {
                         if (one.getCurrent_status ().equals ("currently registered")) {
                             try {
                                 searchToGoogleCompanyWebPagesAndEmail (one);

@@ -1,9 +1,8 @@
 package company.db.startime.colectorcompanydate;
 
-import company.db.startime.model.*;
+import company.db.startime.model.Company;
 import company.db.startime.repository.CompanyActivityRepository;
 import company.db.startime.repository.CompanyRepository;
-import company.db.startime.repository.NewCompanyPojoRepository;
 import company.db.startime.repository.OfficerRepository;
 import company.db.startime.service.CompanyActivityList;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +15,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 
 @Component
@@ -29,8 +29,7 @@ public class Colector {
     private CompanyRepository companyRepository;
     @Autowired
     private SubstringToHtmlDataToCompany substringToHtmlDataToCompany;
-    @Autowired
-    private NewCompanyPojoRepository companyPojoRepository;
+
     @Autowired
     private OfficerRepository officerRepository;
     @Autowired
@@ -43,9 +42,9 @@ public class Colector {
             Company one;
             if (one1.isPresent ()) {
                 one = one1.get ();
-                String s = Optional.ofNullable (one.getRegisteredoffice ()).orElse ("");
+                String s = Optional.ofNullable (one.getAddressCompany ().getRegisteredoffice ()).orElse ("");
                 if (!s.isEmpty ()) {
-                    if (one.getRegisteredoffice ().equals ("Berlin")) {
+                    if (one.getAddressCompany ().getRegisteredoffice ().equals ("Berlin")) {
                         if (one.getCurrent_status ().equals ("currently registered")) {
                             try {
                                 colectionDataCompany (one);
@@ -85,8 +84,10 @@ public class Colector {
     private void coletAndSaveDate(Company company,
             String html) {
         company = substringToHtmlDataToCompany.substringHtml (company, html);
-        company.setEmail (substringToHtmlDataToCompany.colectMailToWebSite (company.getUrl ()));
-        company.setWeb2Url (html);
+        company.getContactCompany ().setEmail (substringToHtmlDataToCompany.colectMailToWebSite (company
+                                                                                                         .getContactCompany ()
+                                                                                                         .getUrl ()));
+        company.getContactCompany ().setWeb2Url (html);
         companyRepository.save (company);
     }
 
@@ -106,113 +107,14 @@ public class Colector {
     @Value ( "${start}" )
     private String start;
 
-    public void constructnewCompany(Long id) {
-        for (; id < 6000000; id++) {
-            Optional<Company> optionalCompany = companyRepository.findById (id);
-            if (optionalCompany.isPresent ()) {
-                Company old = optionalCompany.get ();
-                if (!old.getCurrent_status ().equals ("removed")) construct (old);
-            }
 
-        }
-    }
 
     public Set<String> savetEmails(Company company) {
-        Set<String> set = company.getEmails ();
+        Set<String> set = company.getContactCompany ().getEmails ();
         return new HashSet<> (set);
 
     }
 
-    public void construct(Company company) {
-        //List<Worker> workers = constructWorker (company);
-        Set<String> set = company.getEmails ();
-        NewCompanyPojo companyPojo = new NewCompanyPojo ();
-        List<CompanyActivyty> companyActivyties = create (company, companyPojo);
-
-        ContactCompany contactCompany = new ContactCompany ();
-        AddressCompany addressCompany = new AddressCompany ();
-        addressCompany.setRegister_art (company.getRegister_art ());
-        addressCompany.setRegister_flag_Status_information (company.getRegister_flag_Status_information ());
-        addressCompany.setRegistered_address (company.getRegistered_address ());
-        addressCompany.setRegisteredoffice (company.getRegisteredoffice ());
-        addressCompany.setRegistrar (company.getRegistrar ());
-        contactCompany.setEmail (company.getEmail ());
-        contactCompany.setFax (company.getFax ());
-        contactCompany.setGoogleUri (company.getGoogleUri ());
-        contactCompany.setTelephone (company.getTelephone ());
-        contactCompany.setWeb2Url (company.getWeb2Url ());
-        contactCompany.setUrl (company.getUrl ());
-
-        companyPojo.setCatalog (company.getCatalog ());
-        companyPojo.setCompany_number (company.getCompany_number ());
-        companyPojo.setCurrent_status (company.getCurrent_status ());
-        companyPojo.setJurisdiction_code (company.getJurisdiction_code ());
-        companyPojo.setActivity (company.getActivity ());
-        companyPojo.setKeywordsIndustry (company.getKeywordsIndustry ());
-        companyPojo.setRegister_flag_AD (company.getRegister_flag_AD ());
-        companyPojo.setNative_company_number (company.getNative_company_number ());
-        companyPojo.setCatalog (company.getCatalog ());
-        companyPojo.setName (company.getName ());
-        companyPojoRepository.save (companyPojo);
-        // if (!workers.isEmpty ()) companyPojo.setOfficers (workers);
-        companyPojo.setRetrieved_at (company.getRetrieved_at ());
-        companyPojo.setContactCompany (contactCompany);
-        companyPojo.setAddressCompany (addressCompany);
-        companyPojo.setCompanyActivyties (companyActivyties);
-        companyPojo.getContactCompany ().getEmails ().addAll (set);
-        companyPojoRepository.save (companyPojo);
-
-    }
-
-    //    public List<Worker> constructWorker(Company company) {
-    //        ModelMapper modelMapper = new ModelMapper ();
-    //        List<Officer> byCompany_id = officerRepository.findFirstByNumer (company.getCompany_number ());
-    //        if (byCompany_id != null) {
-    //            List<Worker> officerByCompanies = byCompany_id
-    //                    .stream ()
-    //                    .map (a -> modelMapper.map (a, Worker.class))
-    //                    .collect (Collectors.toList ());
-    //            return officerByCompanies;
-    //        }
-    //        return null;
-    //    }
-
-    public List<CompanyActivyty> create(Company company,
-            NewCompanyPojo companyPojo) {
-        List<CompanyActivyty> activyties = new ArrayList<> ();
-        activyties.addAll (split (company.getKeywordsIndustry (), companyPojo));
-        activyties.addAll (split (company.getActivity (), companyPojo));
-        activyties.addAll (split (company.getCatalog (), companyPojo));
-        activyties.addAll (split (company.getSic (), companyPojo));
-        activyties.addAll (split (company.getSector_of_activity (), companyPojo));
-        return activyties.stream ().distinct ().collect (Collectors.toList ());
-    }
-
-    public Set<CompanyActivyty> split(String activiti,
-            NewCompanyPojo companyPojo) {
-        List<String> activity = companyActivity.getActivity ();
-        Set<CompanyActivyty> activyties = new HashSet<> ();
-        for (String str : activity) {
-            str = str.trim ();
-            if (activiti != null && activiti.contains (str) && str.length () > 2 && !str.equals ("und")) {
-                Optional<CompanyActivyty> byTypeActivity = companyActivityRepository.findByTypeActivity (str);
-                CompanyActivyty companyActivyty;
-                if (byTypeActivity.isPresent ()) {
-                    companyActivyty = byTypeActivity.get ();
-                }
-                else {
-                    companyActivyty = new CompanyActivyty ();
-
-                    companyActivyty.setTypeActivity (str);
-                    companyActivyty.getNewCompanyPoj ().add (companyPojo);
-                }
-
-                activyties.add (companyActivyty);
-            }
-        }
-        return activyties;
-
-    }
 
     private Path path = Paths.get ("webcollect.txt");
 
@@ -231,11 +133,11 @@ public class Colector {
 
     private void colectionDataCompany(Company one) {
         String land = null;
-        if (one.getRegisteredoffice () != null) {
-            land = one.getRegisteredoffice ().toLowerCase ();
+        if (one.getAddressCompany ().getRegisteredoffice () != null) {
+            land = one.getAddressCompany ().getRegisteredoffice ().toLowerCase ();
         }
-        String land1 = one.getRegisteredoffice ();
-        if (land == null) land = one.getRegistrar ();
+        String land1 = one.getAddressCompany ().getRegisteredoffice ();
+        if (land == null) land = one.getAddressCompany ().getRegisteredoffice ();
         String url = start + changeSpaisToUrl (one.getName ()) + midel + land + finish + land1;
         secondUrlToCompany (url, one);
     }

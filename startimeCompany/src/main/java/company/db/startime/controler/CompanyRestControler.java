@@ -3,7 +3,6 @@ package company.db.startime.controler;
 import company.db.startime.model.Company;
 import company.db.startime.model.CompanyDTO;
 import company.db.startime.service.CompanyService;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
@@ -27,9 +26,7 @@ public class CompanyRestControler {
     @GetMapping ( "/get/{id}" )
     @CrossOrigin ( origins = "http://localhost:4200" )
     public CompanyDTO getById(@PathVariable Long id) {
-        ModelMapper modelMapper = new ModelMapper ();
-        Company companyById = companyService.getCompanyById (id);
-        return modelMapper.map (companyById, CompanyDTO.class);
+        return companyService.getCompanyById (id);
     }
 
     @CrossOrigin ( origins = "http://localhost:4200" )

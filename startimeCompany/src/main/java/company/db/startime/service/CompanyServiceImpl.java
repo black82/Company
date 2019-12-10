@@ -2,6 +2,7 @@ package company.db.startime.service;
 
 import company.db.startime.model.Company;
 import company.db.startime.model.CompanyDTO;
+import company.db.startime.repository.CompanyActivityRepository;
 import company.db.startime.repository.CompanyRepository;
 import company.db.startime.repository.OfficerRepository;
 import org.modelmapper.ModelMapper;
@@ -16,6 +17,8 @@ public class CompanyServiceImpl implements CompanyService {
     private final CompanyRepository companyRepository;
     private final OfficerRepository officerRepository;
     private ModelMapper modelMapper = new ModelMapper ();
+    @Autowired
+    CompanyActivityRepository companyActivityRepository;
 
     @Autowired
     public CompanyServiceImpl(CompanyRepository companyRepository,
@@ -33,12 +36,8 @@ public class CompanyServiceImpl implements CompanyService {
                 .collect (Collectors.toList ());
     }
 
-    public Company getCompanyById(Long id) {
-
-        Company idCompany = companyRepository.getOne (id);
-        //        Officer byNumer = officerRepository.findFirstByNumer (idCompany.getCompany_number ());
-        idCompany.setOfficers (null);
-        return idCompany;
+    public CompanyDTO getCompanyById(Long id) {
+        return modelMapper.map (companyRepository.getOne (id), CompanyDTO.class);
     }
 
     public List<CompanyDTO> getFirst1000ByCity(String city) {
@@ -50,15 +49,15 @@ public class CompanyServiceImpl implements CompanyService {
                 .collect (Collectors.toList ());
     }
 
-
+    @Override
     public List<Company> getFirst1000ByRegister_Officer(String register_officer) {
-        return companyRepository.findByRegisteredoffice (register_officer);
+        return companyRepository.findByRegistrar (register_officer);
     }
+
 
     public Company findByNameCompany(String name) {
         return companyRepository.findByName (name);
     }
-
 
 
     public List<CompanyDTO> findByActivity(String activity) {
