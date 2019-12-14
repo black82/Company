@@ -4,22 +4,22 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
+import javax.transaction.Transactional;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
 @Entity
-@Table ( name = "NEWCOMPANY" )
+@Table ( name = "COMPANY" )
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
+@Transactional
 public class Company implements Serializable, Cloneable {
     @Id
     @Column ( name = "COMPANY_ID" )
@@ -68,7 +68,7 @@ public class Company implements Serializable, Cloneable {
             inverseJoinColumns = {@JoinColumn ( name = "OFFICER_ID" )} )
 
     private List<Officer> officers = new ArrayList<> ();
-    @Column ( name = "KEY_WORD_INDUSTRY",
+    @Column ( name = "KEY_WORD_INDUSTR",
             length = 150 )
     private String keywordsIndustry;
     @Column ( name = "CATALOG_INDUSTRY_BRANCH",
@@ -77,12 +77,8 @@ public class Company implements Serializable, Cloneable {
     @Column ( name = "ACTYVITY_TEXT" )
     private String activity;
 
-    @ManyToMany ( cascade = {CascadeType.PERSIST, CascadeType.MERGE} )
-    @Fetch ( value = FetchMode.JOIN )
-    @JoinTable ( name = "COMPANY_TO_ACTIVITY",
-            joinColumns = {@JoinColumn ( name = "COMPANY_ID" )},
-            inverseJoinColumns = {@JoinColumn ( name = "COMPANY_ACTIVITY" )} )
-    private List<CompanyActivyty> companyActivyties = new ArrayList<> ();
+    @OneToMany ( mappedBy = "company" )
+    private List<CompanyToActivity> company = new ArrayList<> ();
 
     @OneToOne ( targetEntity = ContactCompany.class,
             cascade = CascadeType.ALL )

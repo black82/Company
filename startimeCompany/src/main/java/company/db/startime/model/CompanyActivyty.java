@@ -9,6 +9,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+
 @Entity
 @Data
 @AllArgsConstructor
@@ -23,8 +24,7 @@ public class CompanyActivyty {
     @Column ( name = "TYPEACTIVITY" )
     String typeActivity;
 
-    @ManyToMany ( cascade = {CascadeType.PERSIST, CascadeType.MERGE},
-            mappedBy = "companyActivyties" )
-    private List<Company> newCompanyPoj = new ArrayList<> ();
+    @OneToMany ( mappedBy = "companyActivyty" )
+    private List<CompanyToActivity> companyActivity = new ArrayList<> ();
 
 }
