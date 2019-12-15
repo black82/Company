@@ -24,6 +24,7 @@ public class CompanyActivyty {
     @Column ( name = "TYPEACTIVITY" )
     String typeActivity;
 
+
     @OneToMany ( mappedBy = "companyActivyty" )
     private List<CompanyToActivity> companyActivity = new ArrayList<> ();
 

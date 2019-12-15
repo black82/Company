@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,7 +14,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table ( name = "CONTACT_COMPANY" )
-public class ContactCompany {
+public class ContactCompany implements Serializable {
     @Id
     @GeneratedValue ( strategy = GenerationType.IDENTITY )
     @Column ( name = "CONTACT_ID" )
@@ -23,9 +24,11 @@ public class ContactCompany {
     private String url;
     private String email;
     private String googleUri;
+
     @ElementCollection
     @CollectionTable ( name = "EMAILS",
             joinColumns = @JoinColumn ( name = "CONTACT_ID" ) )
     private Set<String> emails = new HashSet<> ();
     private String web2Url;
+
 }

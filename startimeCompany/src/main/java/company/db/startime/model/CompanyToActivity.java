@@ -21,10 +21,12 @@ public class CompanyToActivity {
     @ManyToOne
     @MapsId ( "COMP_ID" )
     @JoinColumn ( name = "COMP_ID" )
+
     Company company;
 
     @ManyToOne
     @MapsId ( "ACTIV_ID" )
     @JoinColumn ( name = "ACTIV_ID" )
+
     CompanyActivyty companyActivyty;
 }

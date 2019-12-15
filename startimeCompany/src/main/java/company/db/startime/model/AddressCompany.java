@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.transaction.Transactional;
+import java.io.Serializable;
 
 @Transactional
 @Entity
@@ -13,7 +14,7 @@ import javax.transaction.Transactional;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table ( name = "ADDRESS_COMPANY" )
-public class AddressCompany {
+public class AddressCompany implements Serializable {
     @Id
     @GeneratedValue ( strategy = GenerationType.IDENTITY )
     @Column ( name = "ADDRESS_ID" )

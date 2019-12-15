@@ -33,7 +33,7 @@ public class CompanyRestControler {
     @GetMapping ( "/get1000/{city}" )
     public List<Company> getFirst1000ByCity(@PathVariable String city) {
         List<Company> first1000ByCity = companyService.getFirst1000ByRegister_Officer (city);
-        System.out.println (first1000ByCity);
+
         return first1000ByCity;
     }
 

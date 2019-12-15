@@ -16,8 +16,10 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class Company_To_Activity_KEY implements Serializable {
     @Column ( name = "COMP_ID" )
+
     private Long comp_id;
     @Column ( name = "ACTIV_ID" )
+
     private Long activ_id;
 
 }

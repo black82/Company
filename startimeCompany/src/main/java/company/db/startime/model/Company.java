@@ -1,5 +1,6 @@
 package company.db.startime.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -76,7 +77,7 @@ public class Company implements Serializable, Cloneable {
     private String catalog;
     @Column ( name = "ACTYVITY_TEXT" )
     private String activity;
-
+    @JsonDeserialize ( using = CustomListDeserializer.class )
     @OneToMany ( mappedBy = "company" )
     private List<CompanyToActivity> company = new ArrayList<> ();
 
