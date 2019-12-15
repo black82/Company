@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -12,7 +14,9 @@ import javax.persistence.*;
 import javax.transaction.Transactional;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity
@@ -77,9 +81,13 @@ public class Company implements Serializable, Cloneable {
     private String catalog;
     @Column ( name = "ACTYVITY_TEXT" )
     private String activity;
+    @ManyToMany ( cascade = {CascadeType.PERSIST, CascadeType.MERGE} )
+    @Fetch ( value = FetchMode.JOIN )
     @JsonDeserialize ( using = CustomListDeserializer.class )
-    @OneToMany ( mappedBy = "company" )
-    private List<CompanyToActivity> company = new ArrayList<> ();
+    @JoinTable ( name = "COMPANY_TO_ACTIVITY",
+            joinColumns = {@JoinColumn ( name = "COMP_ID" )},
+            inverseJoinColumns = {@JoinColumn ( name = "ACTIV_ID" )} )
+    private Set<CompanyActivyty> companyActivyties = new HashSet<> ();
 
     @OneToOne ( targetEntity = ContactCompany.class,
             cascade = CascadeType.ALL )

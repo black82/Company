@@ -1,5 +1,6 @@
 package company.db.startime.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -24,8 +25,9 @@ public class CompanyActivyty {
     @Column ( name = "TYPEACTIVITY" )
     String typeActivity;
 
-
-    @OneToMany ( mappedBy = "companyActivyty" )
-    private List<CompanyToActivity> companyActivity = new ArrayList<> ();
+    @JsonIgnore
+    @ManyToMany ( cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            mappedBy = "companyActivyties" )
+    private List<Company> newCompanyPoj = new ArrayList<> ();
 
 }

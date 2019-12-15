@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CustomListDeserializer extends StdDeserializer<List<CompanyToActivity>> {
+public class CustomListDeserializer extends StdDeserializer<List<CompanyActivyty>> {
 
     public CustomListDeserializer() {
         this (null);
@@ -19,7 +19,7 @@ public class CustomListDeserializer extends StdDeserializer<List<CompanyToActivi
     }
 
     @Override
-    public List<CompanyToActivity> deserialize(JsonParser jsonparser,
+    public List<CompanyActivyty> deserialize(JsonParser jsonparser,
             DeserializationContext context) throws IOException {
 
         return new ArrayList<> ();
