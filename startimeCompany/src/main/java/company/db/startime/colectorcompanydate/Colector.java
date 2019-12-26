@@ -21,7 +21,7 @@ import java.util.Set;
 
 
 @Component
-@PropertySource ( "classpath:templates/application-local.properties" )
+@PropertySource ( "classpath:application-local.properties" )
 public class Colector {
     @Autowired
     private CompanyActivityList companyActivity;

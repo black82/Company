@@ -65,6 +65,7 @@ public class CompanyRestControler {
         return ResponseEntity.ok (companyService.searcByNameCompany (name));
     }
 
+    @CrossOrigin ( origins = "http://localhost:4200" )
     @GetMapping ( params = {"address", "activity"},
             value = "search/" )
     public ResponseEntity findBYAddressAndActivity(@Param ( "address" ) String address,

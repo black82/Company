@@ -17,7 +17,7 @@ import java.util.Date;
 import java.util.Set;
 
 @Component
-@PropertySource ( "classpath:templates/application-local.properties" )
+@PropertySource ( "classpath:application-local.properties" )
 public class JwtTokenProvider {
 
     @Value ( "${jwt.client.secret.hidden}" )
