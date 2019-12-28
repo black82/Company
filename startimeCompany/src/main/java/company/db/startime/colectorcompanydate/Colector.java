@@ -1,9 +1,7 @@
 package company.db.startime.colectorcompanydate;
 
 import company.db.startime.model.Company;
-import company.db.startime.repository.CompanyActivityRepository;
 import company.db.startime.repository.CompanyRepository;
-import company.db.startime.repository.OfficerRepository;
 import company.db.startime.service.CompanyActivityList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,9 +13,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 
 
 @Component
@@ -30,14 +26,12 @@ public class Colector {
     @Autowired
     private SubstringToHtmlDataToCompany substringToHtmlDataToCompany;
 
-    @Autowired
-    private OfficerRepository officerRepository;
-    @Autowired
-    private CompanyActivityRepository companyActivityRepository;
 
+    private Boolean stopeCollect = false;
 
     public Boolean startColector(Long id) {
         for (; id < 10000000; id++) {
+            if (this.stopeCollect) {return true;}
             Optional<Company> one1 = companyRepository.findById (id);
             Company one;
             if (one1.isPresent ()) {
@@ -106,16 +100,6 @@ public class Colector {
     private String finish;
     @Value ( "${start}" )
     private String start;
-
-
-
-    public Set<String> savetEmails(Company company) {
-        Set<String> set = company.getContactCompany ().getEmails ();
-        return new HashSet<> (set);
-
-    }
-
-
     private Path path = Paths.get ("webcollect.txt");
 
     private void secondUrlToCompany(String url,
@@ -169,6 +153,18 @@ public class Colector {
         } catch (IOException ex) {
             ex.printStackTrace ();
         }
+    }
+
+    public Boolean stopCollectServer() {
+        stopeCollect = true;
+        return true;
+    }
+
+    public void restartCollectweb() {
+        if (stopeCollect) {
+            stopeCollect = false;
+        }
+
     }
 }
 

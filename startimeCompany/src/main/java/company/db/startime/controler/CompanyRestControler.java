@@ -1,5 +1,6 @@
 package company.db.startime.controler;
 
+import company.db.startime.colectorcompanydate.Colector;
 import company.db.startime.model.Company;
 import company.db.startime.model.CompanyDTO;
 import company.db.startime.service.CompanyService;
@@ -17,6 +18,8 @@ import java.util.List;
 public class CompanyRestControler {
     @Autowired
     CompanyService companyService;
+    @Autowired
+    Colector colector;
 
     @GetMapping ( "/{cyti}" )
     public ResponseEntity<List<CompanyDTO>> getByRegistr(@PathVariable String cyti) {
@@ -33,7 +36,6 @@ public class CompanyRestControler {
     @GetMapping ( "/get1000/{city}" )
     public List<Company> getFirst1000ByCity(@PathVariable String city) {
         List<Company> first1000ByCity = companyService.getFirst1000ByRegister_Officer (city);
-
         return first1000ByCity;
     }
 
@@ -47,11 +49,6 @@ public class CompanyRestControler {
         return companyService.findByNameCompany (name);
     }
 
-
-    //    @GetMapping ( "/officer/{id}" )
-    //    public void colecter(@PathVariable Long id) {
-    //        companyService.insertOfficerToCompany (id);
-    //    }
 
     @CrossOrigin ( origins = "http://localhost:4200" )
     @GetMapping ( "/industry/{activity}" )

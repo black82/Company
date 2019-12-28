@@ -1,6 +1,7 @@
 package company.db.startime.controler;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -13,7 +14,8 @@ public class ControllerWeb {
         return "resources/static/index.html";
     }
 
-    @RequestMapping ( value = "api/logs" )
+    @CrossOrigin ( origins = "http://localhost:4200" )
+    @RequestMapping ( value = "/api/logs" )
     public String logsWeb() {
         return "log";
     }
