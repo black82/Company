@@ -1,7 +1,6 @@
 package company.db.startime.controler;
 
 import company.db.startime.colectorcompanydate.Colector;
-import company.db.startime.model.Company;
 import company.db.startime.model.CompanyDTO;
 import company.db.startime.service.CompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,53 +21,73 @@ public class CompanyRestControler {
     Colector colector;
 
     @GetMapping ( "/{cyti}" )
-    public ResponseEntity<List<CompanyDTO>> getByRegistr(@PathVariable String cyti) {
-        return ResponseEntity.ok (companyService.getOllCompanyByCity (cyti));
-    }
+    public ResponseEntity<List<CompanyDTO>> getByRegistr(@PathVariable String cyti)
+        {
+            return ResponseEntity.ok (companyService.getOllCompanyByCity (cyti));
+        }
 
     @GetMapping ( "/get/{id}" )
     @CrossOrigin ( origins = "http://localhost:4200" )
-    public CompanyDTO getById(@PathVariable Long id) {
-        return companyService.getCompanyById (id);
-    }
+    public ResponseEntity<CompanyDTO> getById(@PathVariable Long id)
+        {
+            return ResponseEntity
+                    .ok ()
+                    .body (companyService.getCompanyById (id));
+        }
 
     @CrossOrigin ( origins = "http://localhost:4200" )
     @GetMapping ( "/get1000/{city}" )
-    public List<Company> getFirst1000ByCity(@PathVariable String city) {
-        List<Company> first1000ByCity = companyService.getFirst1000ByRegister_Officer (city);
-        return first1000ByCity;
-    }
+    public ResponseEntity<List<CompanyDTO>> getFirst1000ByCity(@PathVariable String city)
+        {
+            return ResponseEntity
+                    .ok ()
+                    .body (companyService.getFirst1000ByRegister_Officer (city));
+
+        }
 
     @GetMapping ( "get1000byofficer/{register_officer}" )
-    public List<Company> getByRegisterOfficer(@PathVariable String register_officer) {
-        return companyService.getFirst1000ByRegister_Officer (register_officer);
-    }
+    public ResponseEntity<List<CompanyDTO>> getByRegisterOfficer(@PathVariable String register_officer)
+        {
+            return ResponseEntity
+                    .ok ()
+                    .body (companyService.getFirst1000ByRegister_Officer (register_officer));
+        }
 
     @GetMapping ( "/getByName/{name}" )
-    public Company findByCompany(@PathVariable String name) {
-        return companyService.findByNameCompany (name);
-    }
+    public ResponseEntity<CompanyDTO> findByCompany(@PathVariable String name)
+        {
+            return ResponseEntity
+                    .ok ()
+                    .body (companyService.findByNameCompany (name));
+        }
 
 
     @CrossOrigin ( origins = "http://localhost:4200" )
     @GetMapping ( "/industry/{activity}" )
-    public List<CompanyDTO> findByActivity(@PathVariable String activity) {
-        return companyService.findByActivity (activity);
-    }
+    public ResponseEntity<List<CompanyDTO>> findByActivity(@PathVariable String activity)
+        {
+            return ResponseEntity
+                    .ok ()
+                    .body (companyService.findByActivity (activity));
+        }
 
     @CrossOrigin ( origins = "http://localhost:4200" )
     @GetMapping ( "/name/{name}" )
-    public ResponseEntity serachByName(@PathVariable String name) {
-        return ResponseEntity.ok (companyService.searcByNameCompany (name));
-    }
+    public ResponseEntity<List<CompanyDTO>> serachByName(@PathVariable String name)
+        {
+            return ResponseEntity.ok (companyService.searcByNameCompany (name));
+        }
 
     @CrossOrigin ( origins = "http://localhost:4200" )
     @GetMapping ( params = {"address", "activity"},
             value = "search/" )
-    public ResponseEntity findBYAddressAndActivity(@Param ( "address" ) String address,
-            @Param ( "activity" ) String activity) {
-        return ResponseEntity.ok ().body (companyService.searchBYActyvityAndAddress (activity, address));
+    public ResponseEntity<List<CompanyDTO>> findBYAddressAndActivity(@Param ( "address" ) String address,
+            @Param ( "activity" ) String activity)
+        {
+            return ResponseEntity
+                    .ok ()
+                    .body (companyService.searchBYActyvityAndAddress (activity, address));
 
-    }
+        }
 }
 

@@ -13,7 +13,7 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Users implements Serializable {
+public class Users implements Serializable, Cloneable {
 
     @Id
     @Column ( name = "id" )

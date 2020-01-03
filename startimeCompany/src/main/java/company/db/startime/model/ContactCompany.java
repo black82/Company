@@ -14,7 +14,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table ( name = "CONTACT_COMPANY" )
-public class ContactCompany implements Serializable {
+public class ContactCompany implements Serializable, Cloneable {
     @Id
     @GeneratedValue ( strategy = GenerationType.IDENTITY )
     @Column ( name = "CONTACT_ID" )

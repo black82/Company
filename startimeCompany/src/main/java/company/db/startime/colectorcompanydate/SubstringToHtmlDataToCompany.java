@@ -8,6 +8,7 @@ import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.client.urlconnection.HTTPSProperties;
 import company.db.startime.model.Company;
 import company.db.startime.repository.CompanyRepository;
+import lombok.SneakyThrows;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -34,6 +35,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static company.db.startime.colectorcompanydate.TorControl.CONTROLPORT;
 
 
 @Component
@@ -379,6 +382,9 @@ public class SubstringToHtmlDataToCompany {
 
     //Connection Selenium Tor
     public String connectionSeleniumTor(String url) {
+        System.setProperty ("java.net.preferIPv4Stack", "true");
+        System.setProperty ("socksProxyHost", "127.0.0.1");
+        System.setProperty ("socksProxyPort", "9150");
         System.setProperty ("webdriver.gecko.driver", "/home/black/Загрузки/geckodriver-v0.26.0-linux64/geckodriver");
         WebDriver driver;
         FirefoxProfile profile = setingFirefoxProfil ();
@@ -395,20 +401,71 @@ public class SubstringToHtmlDataToCompany {
         }
 
         FirefoxOptions options = new FirefoxOptions (cap).setBinary (firefoxBinary).setProfile (profile);
-
+        TorControl tc = null;
+        try
+            {
+                tc = new TorControl ();
+                tc.authenticate ();
+                tc.useProxy ();
+                tc.newIdentity ();
+            } catch (Exception e)
+            {
+                System.out.println ("Couldn't connect to the TOR control port " + CONTROLPORT);
+            }
         driver = new FirefoxDriver (options);
-        try {
-            driver.get (url);
-            return driver.getPageSource ();
-        } finally {
-            kilProces ("sudo service tor restart");
-            driver.quit ();
-            if (service.isRunning ()) {
+
+        driver.get (url);
+        String pageSource = driver.getPageSource ();
+
+        driver.close ();
+        kilProces ("sudo service tor restart");
+
+        if (service.isRunning ())
+            {
                 service.stop ();
             }
-        }
 
+        driver.quit ();
+        return pageSource;
     }
+
+    @SneakyThrows
+    public String newConectionTorBrowser(String url)
+        {
+            WebDriver driver;
+            System.setProperty ("webdriver.gecko.driver", "/home/black/Загрузки/geckodriver-v0.26.0-linux64 /geckodriver");
+            String torPath = "/home/black/Загрузки/tor-browser/tor/Browser/start-tor-browser";
+            String profilePath = "/home/black/Загрузки/tor-browser/tor/Browser/TorBrowser/Data/Browser/profile.default/";
+            File torProfileDir = new File (profilePath);
+            FirefoxBinary binary = new FirefoxBinary (new File (torPath));
+
+            FirefoxProfile torProfile = new FirefoxProfile (torProfileDir);
+            torProfile.setPreference ("network.proxy.type", 1);
+            torProfile.setPreference ("network.proxy.socks", "127.0.0.1");
+            torProfile.setPreference ("network.proxy.socks_port", 9150);
+            binary.startProfile (torProfile, torProfileDir, "");
+            torProfile.setPreference ("webdriver.load.strategy", "unstable");
+            FirefoxOptions options = new FirefoxOptions ();
+            options.setBinary (binary);
+            options.setProfile (torProfile);
+            options.setCapability (FirefoxOptions.FIREFOX_OPTIONS, options);
+
+            driver = new FirefoxDriver (options);
+            driver
+                    .navigate ()
+                    .to (url);
+
+            try {
+
+                driver.get (url);
+
+                return driver.getPageSource ();
+            } finally {
+                driver.close ();
+                kilProces ("sudo service tor restart");
+                driver.quit ();
+            }
+        }
 
     private FirefoxProfile setingFirefoxProfil() {
         FirefoxProfile ff_prof = new FirefoxProfile ();
@@ -438,6 +495,7 @@ public class SubstringToHtmlDataToCompany {
         try {
             pbuilder.redirectError (err);
             Process p = pbuilder.start ();
+            p.destroy ();
         } catch (Exception e) {
             e.printStackTrace ();
         }

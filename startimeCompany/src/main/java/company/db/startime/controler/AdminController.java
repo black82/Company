@@ -3,6 +3,8 @@ package company.db.startime.controler;
 import company.db.startime.colectorcompanydate.Colector;
 import company.db.startime.colectorcompanydate.SubstringToHtmlDataToCompany;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin ( origins = "http://localhost:4200" )
@@ -16,9 +18,12 @@ public class AdminController {
 
 
     @GetMapping ( "collweb/{id}" )
-    public Boolean colectstart(@PathVariable Long id) {
+    public ResponseEntity colectstart(@PathVariable Long id)
+        {
         colector.restartCollectweb ();
-        return colector.startColector (id);
+            return ResponseEntity
+                    .status (HttpStatus.OK)
+                    .body (colector.startColector (id));
     }
 
     @GetMapping ( "/google/{id}" )
@@ -32,7 +37,10 @@ public class AdminController {
     }
 
     @GetMapping ( "stopcollectweb" )
-    public Boolean stopeCllectServer() {
-        return colector.stopCollectServer ();
+    public ResponseEntity<Boolean> stopeCllectServer()
+        {
+            return ResponseEntity
+                    .ok ()
+                    .body (colector.stopCollectServer ());
     }
 }

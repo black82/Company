@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CompanyDTO implements Serializable {
+public class CompanyDTO implements Serializable, Cloneable {
     private Long id;
 
     private String company_number;

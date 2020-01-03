@@ -14,7 +14,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table ( name = "ADDRESS_COMPANY" )
-public class AddressCompany implements Serializable {
+public class AddressCompany implements Serializable, Cloneable {
     @Id
     @GeneratedValue ( strategy = GenerationType.IDENTITY )
     @Column ( name = "ADDRESS_ID" )

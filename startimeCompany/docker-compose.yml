@@ -1,0 +1,72 @@
+version:
+  '3.7'
+services:
+  nginx:
+    image: nginx
+    restart:
+      always
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    networks:
+      - backend
+    depends_on:
+      - app-server
+  app-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8081:8081
+    restart: always
+    container_name: "company"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/berloga?allowPublicKeyRetrieval=true&useSSL=false
+      SPRING_DATASOURCE_USERNAME: black
+      SPRING_DATASOURCE_PASSWORD: Black1982@
+    networks:
+      - backend
+    depends_on:
+      - db
+  #      # Frontend Service
+  #      app-client:
+  #        build:
+  #          context: polling-app-client # Use an image built from the specified dockerfile in the `polling-app-client` directory.
+  #          dockerfile: Dockerfile
+  #          args:
+  #            REACT_APP_API_BASE_URL: http://127.0.0.1:8080/api
+  #        ports:
+  #          - "9090:80" # Map the exposed port 80 on the container to port 9090 on the host machine
+  #        restart: always
+  #        depends_on:
+  #          - app-server
+  #        networks:
+  #          - frontend
+  db:
+    image: mysql:latest
+    ports:
+      - "3306:3306"
+    restart: always
+    environment:
+      MYSQL_DATABASE: berloga
+      MYSQL_USER: black
+      MYSQL_PASSWORD: Black1982@
+      MYSQL_ROOT_PASSWORD: root
+      container_name: "db"
+    volumes:
+      - /var/lib/mysql
+    networks:
+      - backend
+    security_opt:
+      - seccomp:unconfined
+    command: mysqld --lower_case_table_names=1 --skip-ssl --character_set_server=utf8
+
+volumes:
+  db:
+networks:
+  backend:
+
+
+

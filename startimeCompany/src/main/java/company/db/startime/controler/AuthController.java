@@ -22,12 +22,16 @@ public class AuthController {
     @SuppressWarnings ( "rawtypes" )
     @PostMapping ( "/login" )
     public ResponseEntity login(@RequestBody AuthBody data) {
-        return ResponseEntity.ok ().body (userService.login (data));
+        return ResponseEntity
+                .ok ()
+                .body (userService.login (data));
     }
 
     @SuppressWarnings ( "rawtypes" )
     @PostMapping ( "/register" )
     public ResponseEntity register(@RequestBody Users users) {
-        return ResponseEntity.ok ().body (userService.register (users));
+        return ResponseEntity
+                .ok ()
+                .body (userService.register (users));
     }
 }

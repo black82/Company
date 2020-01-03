@@ -1,7 +1,6 @@
 package company.db.startime;
 
 
-import org.apache.log4j.PropertyConfigurator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -9,7 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class StartimeApplication {
 
     public static void main(String[] args)  {
-        PropertyConfigurator.configure ("log4j.properties");
+        //        PropertyConfigurator.configure ("log4j.properties");
         SpringApplication.run(StartimeApplication.class, args);
     }
 }

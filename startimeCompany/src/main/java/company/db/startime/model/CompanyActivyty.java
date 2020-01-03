@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 @Table ( name = "COMPANY_ACTIVITY" )
 @EqualsAndHashCode
-public class CompanyActivyty {
+public class CompanyActivyty implements Serializable, Cloneable {
     @Id
     @GeneratedValue ( strategy = GenerationType.IDENTITY )
     @Column ( name = "ACTIVITY_ID" )
