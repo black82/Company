@@ -2,21 +2,23 @@ package company.db.startime.controler;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 
 @Controller
 public class ControllerWeb {
-    @RequestMapping ( value = "/home",
-            method = RequestMethod.GET )
-    public String getTestTemp() {
-        return "resources/static/index.html";
-    }
+    @CrossOrigin ( origins = "http://localhost:4200" )
+    @GetMapping ( value = {"/home", "/web/company/id", "/web/company/city", "/web/company/industry", "/web/error", "/web/company/login", "/web/company/register", "/web/company/city&&branch", "/web/company/log", "/web/company/collectedweb"} )
+    public ModelAndView getTestTemp()
+        {
+            return new ModelAndView ("index");
+        }
 
     @CrossOrigin ( origins = "http://localhost:4200" )
-    @RequestMapping ( value = "/api/logs" )
-    public String logsWeb() {
-        return "log";
-    }
+    @GetMapping ( value = "/api/logs" )
+    public ModelAndView logsWeb()
+        {
+            return new ModelAndView ("log");
+        }
 }

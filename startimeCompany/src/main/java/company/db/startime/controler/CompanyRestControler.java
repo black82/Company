@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-
+@CrossOrigin ( origins = "*" )
 @RestController
 public class CompanyRestControler {
     @Autowired
@@ -20,7 +20,7 @@ public class CompanyRestControler {
     @Autowired
     Colector colector;
 
-    @GetMapping ( "/{cyti}" )
+    @GetMapping ( "get/{cyti}" )
     public ResponseEntity<List<CompanyDTO>> getByRegistr(@PathVariable String cyti)
         {
             return ResponseEntity.ok (companyService.getOllCompanyByCity (cyti));

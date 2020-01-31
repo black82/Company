@@ -25,65 +25,83 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     JwtTokenProvider jwtTokenProvider;
 
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        UserDetailsService userDetailsService = userDetails ();
-        auth.userDetailsService (userDetailsService).passwordEncoder (bCryptPasswordEncoder ());
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception
+        {
+            UserDetailsService userDetailsService = userDetails ();
+            auth
+                    .userDetailsService (userDetailsService)
+                    .passwordEncoder (bCryptPasswordEncoder ());
 
-    }
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-                .httpBasic ()
-                .disable ()
-                .csrf ()
-                .disable ()
-                .sessionManagement ()
-                .sessionCreationPolicy (SessionCreationPolicy.STATELESS)
-                .and ()
-                .authorizeRequests ()
-                .antMatchers ("/api/auth/login")
-                .permitAll ()
-                .antMatchers ("/api/auth/register")
-                .permitAll ()
-                .antMatchers ("**").permitAll ()
-                //.hasAuthority ("ADMIN")
-                .anyRequest ()
-                .authenticated ()
-                .and ()
-                .csrf ()
-                .disable ()
-                .exceptionHandling ()
-                .authenticationEntryPoint (unauthorizedEntryPoint ())
-                .and ()
-                .apply (new JwtConfigurer (jwtTokenProvider));
-        http.cors ();
-    }
+        }
 
     @Override
-    public void configure(WebSecurity web) throws Exception {
-        web.ignoring ().antMatchers ("/resources/**", "/static/**", "/css/**", "/js/**", "/images/**");
-    }
+    protected void configure(HttpSecurity http) throws Exception
+        {
+            http
+                    .httpBasic ()
+                    .disable ()
+                    .csrf ()
+                    .disable ()
+                    .sessionManagement ()
+                    .sessionCreationPolicy (SessionCreationPolicy.STATELESS)
+                    .and ()
+                    .authorizeRequests ()
+                    .antMatchers ("/api/auth/login")
+                    .permitAll ()
+                    .antMatchers ("/home", "/static/**", "/")
+                    .permitAll ()
+                    .antMatchers ("/favicon.ico", "/*.js", "/*.css", "/*.jpg", "/*.png")
+                    .permitAll ()
+                    .antMatchers ("/api/auth/register")
+                    .permitAll ()
+                    .antMatchers ("**")
+                    .permitAll ()
+                    //                    .hasAuthority ("ADMIN")
+                    //                    .antMatchers ("**")
+                    //                    .hasAuthority ("USER")
+                    .anyRequest ()
+                    .authenticated ()
+                    .and ()
+                    .csrf ()
+                    .disable ()
+                    .exceptionHandling ()
+                    .authenticationEntryPoint (unauthorizedEntryPoint ())
+                    .and ()
+                    .apply (new JwtConfigurer (jwtTokenProvider));
+            http.cors ();
+        }
+
+    @Override
+    public void configure(WebSecurity web) throws Exception
+        {
+            web
+                    .ignoring ()
+                    .antMatchers ("/resources/**", "/static/**", "/css/**", "/js/**", "/images/**");
+        }
 
     @Bean
-    public PasswordEncoder bCryptPasswordEncoder() {
-        return new BCryptPasswordEncoder ();
-    }
+    public PasswordEncoder bCryptPasswordEncoder()
+        {
+            return new BCryptPasswordEncoder ();
+        }
 
     @Bean
     @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean ();
-    }
+    public AuthenticationManager authenticationManagerBean() throws Exception
+        {
+            return super.authenticationManagerBean ();
+        }
 
     @Bean
-    public AuthenticationEntryPoint unauthorizedEntryPoint() {
-        return (request, response, authException) -> response.sendError (HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
-    }
+    public AuthenticationEntryPoint unauthorizedEntryPoint()
+        {
+            return (request, response, authException) -> response.sendError (HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+        }
 
     @Bean
-    public UserDetailsService userDetails() {
-        return new CustomUserDetailsService ();
-    }
+    public UserDetailsService userDetails()
+        {
+            return new CustomUserDetailsService ();
+        }
 }
 
